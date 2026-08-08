@@ -7,7 +7,8 @@ import stockpileData from "@/data/stockpile.json";
 import animalsData from "@/data/animals.json";
 import type { Animal, ExpiryLot, StockpileItem } from "@/lib/types";
 import { effectiveNeed, formatQty } from "@/lib/need";
-import { daysUntil, guessExpiry, stageLabel } from "@/lib/expiry";
+import { daysUntil, guessExpiry, moodOf, soonestExpiry, stageLabel } from "@/lib/expiry";
+import { localVoice } from "@/lib/voice";
 import WhenBought from "@/components/WhenBought";
 import SourceFooter from "@/components/SourceFooter";
 
@@ -25,6 +26,8 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const qty = stock?.qty ?? 0;
   const [manualDate, setManualDate] = useState("");
   const [selectedLotId, setSelectedLotId] = useState<string | null>(null);
+  const [bubble, setBubble] = useState<string | null>(null);
+  const [tapCount, setTapCount] = useState(0);
   const sortedLots = (stock?.lots ?? [])
     .slice()
     .sort((a, b) => a.expiresOn.localeCompare(b.expiresOn));
@@ -63,7 +66,30 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
 
       {/* プロフィール */}
       <section className="flex flex-col items-center gap-1 rounded-3xl bg-card p-5 shadow">
-        <span className="text-6xl">{animal?.emoji ?? "📦"}</span>
+        {/* 吹き出し（タップで返事） */}
+        {bubble && (
+          <p className="relative mb-1 max-w-[90%] rounded-2xl bg-sky px-4 py-2 text-center text-sm font-bold after:absolute after:-bottom-1.5 after:left-1/2 after:h-3 after:w-3 after:-translate-x-1/2 after:rotate-45 after:bg-sky">
+            {bubble}
+          </p>
+        )}
+        <button
+          type="button"
+          aria-label="はなしかける"
+          className="text-6xl transition-transform active:scale-90"
+          onClick={() => {
+            if (!animal) return;
+            const lot = stock ? soonestExpiry(stock) : undefined;
+            const days = lot ? daysUntil(lot.expiresOn, now) : null;
+            const mood = qty > 0 && days !== null ? moodOf(days) : "calm";
+            const n = tapCount + 1;
+            setTapCount(n);
+            setBubble(
+              localVoice(mood, { name: animal.name, item: item.name, days }, n)
+            );
+          }}
+        >
+          {animal?.emoji ?? "📦"}
+        </button>
         <h1 className="text-xl font-extrabold">
           {animal ? animal.name : item.name}
         </h1>
