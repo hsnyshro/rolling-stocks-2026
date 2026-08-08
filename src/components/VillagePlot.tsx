@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { Animal, Family, Stock, StockpileItem } from "@/lib/types";
 import { plotState } from "@/lib/village";
-import { calcNeed, fallbackNeed, formatQty } from "@/lib/need";
+import { effectiveNeed, formatQty } from "@/lib/need";
 import { daysUntil, moodOf, soonestExpiry } from "@/lib/expiry";
 
 interface Props {
@@ -16,9 +16,8 @@ interface Props {
 
 export default function VillagePlot({ item, animal, stock, family, today }: Props) {
   const qty = stock?.qty ?? 0;
-  const need = calcNeed(item, family);
-  const state = plotState(qty, need, family);
-  const needShown = need ?? fallbackNeed(family);
+  const eff = effectiveNeed(item, family);
+  const state = plotState(qty, eff.isFallback ? null : eff.value, family);
 
   // 期限が一番近い記録から、どうぶつの気分を決める
   const lot = stock ? soonestExpiry(stock) : undefined;
@@ -67,8 +66,8 @@ export default function VillagePlot({ item, animal, stock, family, today }: Prop
 
       {/* 数のメーター「3/21」 */}
       <span className="text-[10px] text-stone-500">
-        {formatQty(qty, item.unit)}/{formatQty(needShown, item.unit)}
-        {item.unit}
+        {formatQty(qty, eff.unit)}/{formatQty(eff.value, eff.unit)}
+        {eff.unit}
       </span>
     </Link>
   );

@@ -66,12 +66,15 @@ export default function ScanPage() {
                 >
                   −
                 </button>
-                <span className="w-8 text-center font-extrabold">
-                  {v}
-                  <span className="text-[10px] font-normal text-stone-400">
-                    {item.unit}
-                  </span>
-                </span>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  value={v}
+                  onChange={(e) => set(a.itemId, Number(e.target.value) || 0)}
+                  aria-label={`${item.name}のかず`}
+                  className="w-14 rounded-lg border border-sky bg-sky/40 py-1 text-center font-extrabold"
+                />
                 <button
                   type="button"
                   aria-label={`${item.name}をふやす`}

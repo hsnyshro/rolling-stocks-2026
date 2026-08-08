@@ -4,7 +4,7 @@ import { useState } from "react";
 import stockpileData from "@/data/stockpile.json";
 import animalsData from "@/data/animals.json";
 import type { Family, StockpileItem } from "@/lib/types";
-import { calcNeed, formatQty } from "@/lib/need";
+import { calcNeed, formatQty, isVagueUnit } from "@/lib/need";
 
 const items = stockpileData.items as StockpileItem[];
 
@@ -69,7 +69,7 @@ export default function RecommendList({ family }: { family: Family }) {
                         {it.name}
                       </span>
                       <span className="shrink-0 text-sm font-bold text-grass-deep">
-                        {need !== null
+                        {need !== null && !isVagueUnit(it.unit)
                           ? `${formatQty(need, it.unit)}${it.unit}`
                           : "あると安心"}
                       </span>

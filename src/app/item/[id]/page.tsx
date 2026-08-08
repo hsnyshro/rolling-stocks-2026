@@ -6,7 +6,7 @@ import { useApp } from "@/store/useApp";
 import stockpileData from "@/data/stockpile.json";
 import animalsData from "@/data/animals.json";
 import type { Animal, ExpiryLot, StockpileItem } from "@/lib/types";
-import { calcNeed, fallbackNeed, formatQty } from "@/lib/need";
+import { effectiveNeed, formatQty } from "@/lib/need";
 import { daysUntil, guessExpiry, stageLabel } from "@/lib/expiry";
 import SourceFooter from "@/components/SourceFooter";
 
@@ -35,7 +35,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
     );
   }
 
-  const need = calcNeed(item, family) ?? fallbackNeed(family);
+  const eff = effectiveNeed(item, family);
   const now = today();
 
   const addWithGuess = () => {
@@ -83,17 +83,17 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
         <div className="flex items-end justify-between">
           <span className="text-sm font-bold">いまのかず</span>
           <span className="text-2xl font-extrabold text-grass-deep">
-            {formatQty(qty, item.unit)}
+            {formatQty(qty, eff.unit)}
             <span className="text-sm text-stone-500">
-              /{formatQty(need, item.unit)}
-              {item.unit}
+              /{formatQty(eff.value, eff.unit)}
+              {eff.unit}
             </span>
           </span>
         </div>
         <div className="mt-2 h-3 overflow-hidden rounded-full bg-sky">
           <div
             className="h-full rounded-full bg-grass transition-all"
-            style={{ width: `${Math.min(100, (qty / need) * 100)}%` }}
+            style={{ width: `${Math.min(100, (qty / eff.value) * 100)}%` }}
           />
         </div>
         <div className="mt-3 flex gap-2">
