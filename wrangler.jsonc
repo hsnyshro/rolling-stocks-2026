@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "rolling-stocks",
+  "compatibility_date": "2026-08-01",
+  "compatibility_flags": [
+    // Node.js の API を使えるようにする（Next.js の動作に必要）
+    "nodejs_compat",
+    // アプリから外部URL（Gemini API）を fetch できるようにする
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "rolling-stocks"
+    }
+  ],
+  // Workers AI（どうぶつのセリフ生成に使う）
+  "ai": {
+    "binding": "AI"
+  }
+}
