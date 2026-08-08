@@ -10,6 +10,7 @@ import type { Animal, ExpiryLot, StockpileItem } from "@/lib/types";
 import { effectiveNeed, formatQty } from "@/lib/need";
 import { daysUntil, guessExpiry, moodOf, soonestExpiry, stageLabel } from "@/lib/expiry";
 import { localVoice } from "@/lib/voice";
+import { toCleanJpegBase64 } from "@/lib/photo";
 import WhenBought from "@/components/WhenBought";
 import SourceFooter from "@/components/SourceFooter";
 
@@ -29,6 +30,39 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const [selectedLotId, setSelectedLotId] = useState<string | null>(null);
   const [bubble, setBubble] = useState<string | null>(null);
   const [tapCount, setTapCount] = useState(0);
+  // 期限のアップ撮影（段階3: 確認済みへの昇格）
+  const [expiryScan, setExpiryScan] = useState<"idle" | "busy" | "fail">("idle");
+
+  const onExpiryPhoto = async (file: File, lotId: string) => {
+    if (!stock) return;
+    const lot = stock.lots.find((l) => l.id === lotId);
+    if (!lot) return;
+    setExpiryScan("busy");
+    try {
+      // 位置情報などのメタデータを消してから送る（企画の約束）
+      const { base64, mimeType } = await toCleanJpegBase64(file);
+      const res = await fetch("/api/expiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64, mimeType }),
+      });
+      const data = await res.json();
+      if (res.ok && data.found) {
+        setLot(itemId, {
+          ...lot,
+          expiresOn: data.date,
+          kind: data.kind,
+          stage: "confirmed",
+        });
+        setExpiryScan("idle");
+        setSelectedLotId(null);
+      } else {
+        setExpiryScan("fail"); // 読めなかった → 手動入力へ誘導
+      }
+    } catch {
+      setExpiryScan("fail");
+    }
+  };
   const sortedLots = (stock?.lots ?? [])
     .slice()
     .sort((a, b) => a.expiresOn.localeCompare(b.expiresOn));
@@ -88,9 +122,27 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
             const mood = qty > 0 && days !== null ? moodOf(days) : "calm";
             const n = tapCount + 1;
             setTapCount(n);
+            // まずローカルの定型文を即表示（ネット無しでも必ず返事する）
             setBubble(
               localVoice(mood, { name: animal.name, item: item.name, days }, n)
             );
+            // 裏でAIセリフを取りに行き、来たら差し替える
+            fetch("/api/voice", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: animal.name,
+                species: animal.species,
+                itemName: item.name,
+                mood,
+                daysLeft: days,
+              }),
+            })
+              .then((r) => (r.ok ? r.json() : null))
+              .then((d) => {
+                if (d?.line) setBubble(d.line);
+              })
+              .catch(() => {}); // 失敗しても定型文が残るだけ
           }}
         >
           {animal?.emoji ?? "📦"}
@@ -211,7 +263,31 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
                         }}
                       />
                     )}
-                    {/* 段階3: 手で入れて「確認済み」に（写真での読み取りはあとで追加） */}
+                    {/* 段階3a: 期限のアップ撮影で「確認済み」に */}
+                    <label className="mt-2 block">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) onExpiryPhoto(f, lot.id);
+                          e.target.value = "";
+                        }}
+                      />
+                      <span className="block w-full cursor-pointer rounded-full bg-sun py-2 text-center text-sm font-bold shadow active:scale-95">
+                        {expiryScan === "busy"
+                          ? "🔍 よみとり中…"
+                          : "📷 きげんの ひづけを さつえい"}
+                      </span>
+                    </label>
+                    {expiryScan === "fail" && (
+                      <p className="mt-1 text-center text-[11px] font-bold text-alert">
+                        読み取れなかった。下から手で入れてね
+                      </p>
+                    )}
+                    {/* 段階3b: 手で入れて「確認済み」に */}
                     <div className="mt-2 flex items-center gap-2">
                       <input
                         type="date"
