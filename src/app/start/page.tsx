@@ -8,6 +8,7 @@ import Stepper from "@/components/Stepper";
 import RecommendList from "@/components/RecommendList";
 import ConsentCard from "@/components/ConsentCard";
 import SourceFooter from "@/components/SourceFooter";
+import { useHydrated } from "@/store/useHydrated";
 
 const DEFAULT_FAMILY: Family = {
   adults: 2,
@@ -23,9 +24,18 @@ export default function StartPage() {
   const { family, setFamily, consented } = useApp();
   const [draft, setDraft] = useState<Family>(family ?? DEFAULT_FAMILY);
   const [showList, setShowList] = useState(family !== null);
-  // localStorage 復元前のチラつき防止
-  const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
+  // localStorage 復元完了を待つ + 復元後に保存済みの家族構成を下書きに反映
+  const ready = useHydrated();
+  const [restored, setRestored] = useState(false);
+  useEffect(() => {
+    if (!ready || restored) return;
+    const f = useApp.getState().family;
+    if (f) {
+      setDraft(f);
+      setShowList(true);
+    }
+    setRestored(true);
+  }, [ready, restored]);
 
   if (!ready) return null;
 

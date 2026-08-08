@@ -2,6 +2,7 @@
 // 品目の詳細: どうぶつのプロフィール・数・期限・たべた/かってきた
 import Link from "next/link";
 import { use, useState } from "react";
+import { useHydrated } from "@/store/useHydrated";
 import { useApp } from "@/store/useApp";
 import stockpileData from "@/data/stockpile.json";
 import animalsData from "@/data/animals.json";
@@ -31,6 +32,10 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const sortedLots = (stock?.lots ?? [])
     .slice()
     .sort((a, b) => a.expiresOn.localeCompare(b.expiresOn));
+  // 保存データ(localStorage)の復元が終わるまで描画しない（チラつき・誤表示防止）
+  const ready = useHydrated();
+
+  if (!ready) return null;
 
   if (!item || !family) {
     return (

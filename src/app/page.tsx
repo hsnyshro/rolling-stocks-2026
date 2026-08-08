@@ -1,8 +1,9 @@
 "use client";
 // 村（ホーム画面）= 図鑑。1画面で2役
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useApp } from "@/store/useApp";
+import { useHydrated } from "@/store/useHydrated";
 import stockpileData from "@/data/stockpile.json";
 import animalsData from "@/data/animals.json";
 import type { Animal, StockpileItem } from "@/lib/types";
@@ -15,9 +16,8 @@ const animals = animalsData.animals as Animal[];
 
 export default function VillagePage() {
   const { family, stocks, today, fastForward, demoOffsetDays } = useApp();
-  // localStorage 復元前のチラつき防止
-  const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
+  // localStorage 復元完了前のチラつき・誤表示防止
+  const ready = useHydrated();
   // タイトル7回タップで時間早送り（デモ用の隠しボタン）
   const [taps, setTaps] = useState(0);
 
