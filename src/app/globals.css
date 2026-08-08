@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+:root {
+  /* 村の世界観: 草原の緑 × 空色 × あたたかい土色 */
+  --sky: #eef7ff;
+  --grass: #8fce5e;
+  --grass-deep: #5aa63c;
+  --soil: #b98a5e;
+  --ink: #3d3a34;
+  --card: #ffffff;
+  --sun: #ffd95e;
+  --alert: #ff8a65;
+}
+
+@theme inline {
+  --color-sky: var(--sky);
+  --color-grass: var(--grass);
+  --color-grass-deep: var(--grass-deep);
+  --color-soil: var(--soil);
+  --color-ink: var(--ink);
+  --color-card: var(--card);
+  --color-sun: var(--sun);
+  --color-alert: var(--alert);
+  --font-rounded: var(--font-rounded), "Hiragino Maru Gothic ProN", sans-serif;
+}
+
+body {
+  background: var(--sky);
+  color: var(--ink);
+}
+
+/* どうぶつが「遊んで！」とせがむときのぴょんぴょん */
+@keyframes hop {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-8px); }
+  50% { transform: translateY(0); }
+  65% { transform: translateY(-4px); }
+  80% { transform: translateY(0); }
+}
+.animate-hop {
+  animation: hop 1.1s ease-in-out infinite;
+}
+
+/* しょんぼり（ゆっくり小さく揺れる） */
+@keyframes droop {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-6deg); }
+}
+.animate-droop {
+  animation: droop 2.4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* おうちが点灯したときのやわらかい光 */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 12px 2px rgba(255, 217, 94, 0.55); }
+  50% { box-shadow: 0 0 20px 6px rgba(255, 217, 94, 0.8); }
+}
+.animate-glow {
+  animation: glow 2.2s ease-in-out infinite;
+}
