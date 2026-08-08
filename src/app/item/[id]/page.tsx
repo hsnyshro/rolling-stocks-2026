@@ -8,6 +8,7 @@ import animalsData from "@/data/animals.json";
 import type { Animal, ExpiryLot, StockpileItem } from "@/lib/types";
 import { effectiveNeed, formatQty } from "@/lib/need";
 import { daysUntil, guessExpiry, stageLabel } from "@/lib/expiry";
+import WhenBought from "@/components/WhenBought";
 import SourceFooter from "@/components/SourceFooter";
 
 const items = stockpileData.items as StockpileItem[];
@@ -23,6 +24,10 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const stock = stocks[itemId];
   const qty = stock?.qty ?? 0;
   const [manualDate, setManualDate] = useState("");
+  const [selectedLotId, setSelectedLotId] = useState<string | null>(null);
+  const sortedLots = (stock?.lots ?? [])
+    .slice()
+    .sort((a, b) => a.expiresOn.localeCompare(b.expiresOn));
 
   if (!item || !family) {
     return (
@@ -131,15 +136,20 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           <p className="mt-2 text-xs text-stone-500">まだ きろくが ないよ</p>
         )}
         <ul className="mt-1">
-          {stock?.lots
-            .slice()
-            .sort((a, b) => a.expiresOn.localeCompare(b.expiresOn))
-            .map((lot) => {
-              const d = daysUntil(lot.expiresOn, now);
-              return (
-                <li
-                  key={lot.id}
-                  className="flex items-center justify-between border-b border-sky/60 py-2 text-sm last:border-b-0"
+          {sortedLots.map((lot) => {
+            const d = daysUntil(lot.expiresOn, now);
+            const isSelected = lot.id === selectedLotId;
+            return (
+              <li
+                key={lot.id}
+                className="border-b border-sky/60 py-2 last:border-b-0"
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSelectedLotId(isSelected ? null : lot.id)
+                  }
+                  className="flex w-full items-center justify-between text-sm"
                 >
                   <span>
                     {lot.expiresOn}（{formatQty(lot.qty, item.unit)}
@@ -152,41 +162,56 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
                         : "bg-sky text-stone-600"
                     }`}
                   >
-                    {stageLabel(lot.stage)}・あと{d}日
+                    {stageLabel(lot.stage)}・あと{d}日 {isSelected ? "▲" : "▼"}
                   </span>
-                </li>
-              );
-            })}
-        </ul>
+                </button>
 
-        {/* 手動入力（写真での読み取りはあとで追加） */}
-        {stock && stock.lots.length > 0 && (
-          <div className="mt-3 flex items-center gap-2">
-            <input
-              type="date"
-              value={manualDate}
-              onChange={(e) => setManualDate(e.target.value)}
-              className="flex-1 rounded-xl border border-sky bg-sky/40 px-3 py-2 text-sm"
-              aria-label="きげんを 手で入れる"
-            />
-            <button
-              type="button"
-              disabled={!manualDate}
-              onClick={() => {
-                const first = stock.lots[0];
-                setLot(itemId, {
-                  ...first,
-                  expiresOn: manualDate,
-                  stage: "confirmed",
-                });
-                setManualDate("");
-              }}
-              className="rounded-full bg-grass-deep px-4 py-2 text-sm font-bold text-white shadow active:scale-95 disabled:opacity-40"
-            >
-              かくてい
-            </button>
-          </div>
-        )}
+                {/* タップで開く: 期限をくわしくする操作 */}
+                {isSelected && (
+                  <div className="mt-1">
+                    {/* 段階2: いつ買った？（確認済みになったら出さない） */}
+                    {lot.stage !== "confirmed" && (
+                      <WhenBought
+                        shelfLifeMonths={animal?.shelfLifeMonths ?? 12}
+                        today={now}
+                        onPick={(expiresOn) => {
+                          setLot(itemId, { ...lot, expiresOn, stage: "narrowed" });
+                          setSelectedLotId(null);
+                        }}
+                      />
+                    )}
+                    {/* 段階3: 手で入れて「確認済み」に（写真での読み取りはあとで追加） */}
+                    <div className="mt-2 flex items-center gap-2">
+                      <input
+                        type="date"
+                        value={manualDate}
+                        onChange={(e) => setManualDate(e.target.value)}
+                        className="flex-1 rounded-xl border border-sky bg-sky/40 px-3 py-2 text-sm"
+                        aria-label="きげんを 手で入れる"
+                      />
+                      <button
+                        type="button"
+                        disabled={!manualDate}
+                        onClick={() => {
+                          setLot(itemId, {
+                            ...lot,
+                            expiresOn: manualDate,
+                            stage: "confirmed",
+                          });
+                          setManualDate("");
+                          setSelectedLotId(null);
+                        }}
+                        className="rounded-full bg-grass-deep px-4 py-2 text-sm font-bold text-white shadow active:scale-95 disabled:opacity-40"
+                      >
+                        かくてい
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
         <p className="mt-2 text-[10px] leading-relaxed text-stone-500">
           「賞味期限」は おいしく食べられる目安。すぎても すぐ食べられなくなるわけではないよ。
           においや見た目も たしかめてね。
