@@ -72,6 +72,12 @@ export interface Stock {
   lots: ExpiryLot[];
   /** 「期限前に食べて買い足した」回数 = 星の数 */
   stars: number;
+  /**
+   * 「期限前に食べたけど、まだ買い足していない」回数。
+   * consume() で期限前に食べると +1 され、addCount()（買い足し）で 1 消費して stars が +1 される。
+   * ローリングストック（食べる→買い足す）の途中状態を表すカウンタ。
+   */
+  pendingRotations: number;
 }
 
 // ---- 村の枠の3状態 ----

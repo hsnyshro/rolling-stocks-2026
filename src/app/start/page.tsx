@@ -1,11 +1,12 @@
 "use client";
 // 家族のことを入れる → 東京都のすすめる備蓄量（7日分）が出る
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApp } from "@/store/useApp";
 import type { Family } from "@/lib/types";
 import Stepper from "@/components/Stepper";
 import RecommendList from "@/components/RecommendList";
+import ConsentCard from "@/components/ConsentCard";
 import SourceFooter from "@/components/SourceFooter";
 
 const DEFAULT_FAMILY: Family = {
@@ -19,9 +20,24 @@ const DEFAULT_FAMILY: Family = {
 
 export default function StartPage() {
   const router = useRouter();
-  const { family, setFamily } = useApp();
+  const { family, setFamily, consented } = useApp();
   const [draft, setDraft] = useState<Family>(family ?? DEFAULT_FAMILY);
   const [showList, setShowList] = useState(family !== null);
+  // localStorage 復元前のチラつき防止
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+
+  if (!ready) return null;
+
+  // はじめての人には、まず「おやくそく」（同意画面）
+  if (!consented) {
+    return (
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-3 p-4">
+        <ConsentCard />
+        <SourceFooter />
+      </main>
+    );
+  }
 
   const set = (k: keyof Family) => (v: number) => {
     setDraft({ ...draft, [k]: v });
