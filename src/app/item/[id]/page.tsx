@@ -32,6 +32,8 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const [selectedLotId, setSelectedLotId] = useState<string | null>(null);
   const [bubble, setBubble] = useState<string | null>(null);
   const [tapCount, setTapCount] = useState(0);
+  // 買ってきたよ確認: nullは非表示。数値は「これから足す個数」（未確定）
+  const [boughtDelta, setBoughtDelta] = useState<number | null>(null);
   // 期限のアップ撮影（段階3: 確認済みへの昇格）
   const [expiryScan, setExpiryScan] = useState<"idle" | "busy" | "fail">("idle");
 
@@ -94,16 +96,18 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const isLit =
     plotState(qty, eff.isFallback ? null : eff.value, family) === "lit";
 
-  const addWithGuess = () => {
-    // 買ってきたよ = 追加。期限は種類から短め（安全側）に推測して付ける
+  const confirmBought = (delta: number) => {
+    // 買ってきたよ = 追加。ここで初めて確定登録する（それまでは在庫に触れない）
+    // 期限は種類から短め（安全側）に推測して付ける
     const lot: ExpiryLot = {
       id: `lot-${itemId}-${Date.now()}`,
-      qty: 1,
+      qty: delta,
       expiresOn: guessExpiry(animal?.shelfLifeMonths ?? 12, now),
       stage: "guessed",
       kind: "best-before",
     };
-    addStock(itemId, 1, lot);
+    addStock(itemId, delta, lot);
+    setBoughtDelta(null);
   };
 
   return (
@@ -218,12 +222,60 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           </button>
           <button
             type="button"
-            onClick={addWithGuess}
+            onClick={() => setBoughtDelta(1)}
             className="flex-1 rounded-full bg-grass-deep py-3 font-bold text-white shadow active:scale-95"
           >
             🛒 買ってきたよ
           </button>
         </div>
+        {/* 買ってきたよ確認: この時点ではまだ在庫は変わっていない。人が確定して初めて反映 */}
+        {boughtDelta !== null && (
+          <div className="mt-3 rounded-2xl bg-sky/60 p-3">
+            <p className="text-center text-sm font-bold">何個買った？</p>
+            <div className="mt-2 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                aria-label="買った数を減らす"
+                onClick={() => setBoughtDelta((d) => Math.max(1, (d ?? 1) - 1))}
+                disabled={boughtDelta <= 1}
+                className="h-9 w-9 rounded-full bg-card font-bold shadow-sm active:scale-90 disabled:opacity-30"
+              >
+                −
+              </button>
+              <span className="w-10 text-center text-lg font-extrabold">
+                {formatQty(boughtDelta, item.unit)}
+              </span>
+              <button
+                type="button"
+                aria-label="買った数を増やす"
+                onClick={() => setBoughtDelta((d) => (d ?? 1) + 1)}
+                className="h-9 w-9 rounded-full bg-card font-bold shadow-sm active:scale-90"
+              >
+                ＋
+              </button>
+            </div>
+            <p className="mt-2 text-center text-sm font-bold text-grass-deep">
+              合計{formatQty(qty + boughtDelta, eff.unit)}
+              {eff.unit}で合ってる？
+            </p>
+            <div className="mt-2 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setBoughtDelta(null)}
+                className="flex-1 rounded-full bg-card py-2 text-sm font-bold text-stone-600 shadow-sm active:scale-95"
+              >
+                やめる
+              </button>
+              <button
+                type="button"
+                onClick={() => confirmBought(boughtDelta)}
+                className="flex-1 rounded-full bg-grass-deep py-2 text-sm font-bold text-white shadow active:scale-95"
+              >
+                この数で登録する
+              </button>
+            </div>
+          </div>
+        )}
         {qty === 0 && (
           <button
             type="button"
