@@ -1,18 +1,18 @@
 {
-  "note": "村に住むどうぶつ。itemId は東京備蓄ナビの品目ID。shelfLifeMonths は期限の『推測』段階で使う保存期間の目安（安全側=短め。自前の設定値であり備蓄ナビのデータではない）",
+  "note": "村に住むどうぶつ。itemId は東京備蓄ナビの品目ID。shelfLifeMonths は期限の『推測』段階で使う保存期間の目安（安全側=短め。自前の設定値であり備蓄ナビのデータではない）。slug は public/animals/{slug}-{表情}.png の画像ファイル名",
   "basicFive": [1, 2, 4, 13, 6],
   "animals": [
-    { "itemId": 1,  "species": "カワウソ",  "name": "みずまる",     "emoji": "🦦", "shelfLifeMonths": 12, "profile": "お水の番人。きれいな水がないと元気が出ない" },
-    { "itemId": 2,  "species": "ハムスター", "name": "こめきち",     "emoji": "🐹", "shelfLifeMonths": 6,  "profile": "ほっぺにごはんをためこむのが仕事" },
-    { "itemId": 3,  "species": "クマ",      "name": "れとるくま",   "emoji": "🐻", "shelfLifeMonths": 12, "profile": "カレーとシチューに目がない力もち" },
-    { "itemId": 4,  "species": "ネコ",      "name": "さばにゃん",   "emoji": "🐱", "shelfLifeMonths": 24, "profile": "サバ缶が大好物。缶詰のことなら何でも知ってる" },
-    { "itemId": 6,  "species": "ウサギ",    "name": "べじうさ",     "emoji": "🐰", "shelfLifeMonths": 6,  "profile": "野菜ジュースで毎日ぴょんぴょん" },
-    { "itemId": 7,  "species": "ネズミ",    "name": "ちーずみ",     "emoji": "🐭", "shelfLifeMonths": 6,  "profile": "チーズとプロテインバーで筋トレ中" },
-    { "itemId": 10, "species": "タヌキ",    "name": "めんたぬ",     "emoji": "🦝", "shelfLifeMonths": 4,  "profile": "たぬきそばはぼくのおごり" },
-    { "itemId": 11, "species": "ニワトリ",  "name": "おこめっこ",   "emoji": "🐔", "shelfLifeMonths": 2,  "profile": "お米の鮮度にとってもきびしい" },
-    { "itemId": 13, "species": "リス",      "name": "おかしりす",   "emoji": "🐿️", "shelfLifeMonths": 4,  "profile": "おやつをためこむ天才。でも食べごろは逃さない" },
-    { "itemId": 14, "species": "サル",      "name": "ふるもん",     "emoji": "🐵", "shelfLifeMonths": 24, "profile": "果物の缶詰コレクター" },
-    { "itemId": 55, "species": "ペンギン",  "name": "ふりーずん",   "emoji": "🐧", "shelfLifeMonths": 9,  "profile": "フリーズドライの氷の国からきた" },
-    { "itemId": 56, "species": "カメ",      "name": "かんぶつじい", "emoji": "🐢", "shelfLifeMonths": 6,  "profile": "干ししいたけと昆布で長生きしておる" }
+    { "itemId": 1,  "species": "カワウソ",  "name": "みずまる",     "slug": "mizumaru",    "emoji": "🦦", "shelfLifeMonths": 12, "profile": "お水の番人。きれいな水がないと元気が出ない" },
+    { "itemId": 2,  "species": "ハムスター", "name": "こめきち",     "slug": "komekichi",   "emoji": "🐹", "shelfLifeMonths": 6,  "profile": "ほっぺにごはんをためこむのが仕事" },
+    { "itemId": 3,  "species": "クマ",      "name": "れとるくま",   "slug": "retorukuma",  "emoji": "🐻", "shelfLifeMonths": 12, "profile": "カレーとシチューに目がない力もち" },
+    { "itemId": 4,  "species": "ネコ",      "name": "さばにゃん",   "slug": "sabanyan",    "emoji": "🐱", "shelfLifeMonths": 24, "profile": "サバ缶が大好物。缶詰のことなら何でも知ってる" },
+    { "itemId": 6,  "species": "ウサギ",    "name": "べじうさ",     "slug": "vejiusa",     "emoji": "🐰", "shelfLifeMonths": 6,  "profile": "野菜ジュースで毎日ぴょんぴょん" },
+    { "itemId": 7,  "species": "ネズミ",    "name": "ちーずみ",     "slug": "chiizumi",    "emoji": "🐭", "shelfLifeMonths": 6,  "profile": "チーズとプロテインバーで筋トレ中" },
+    { "itemId": 10, "species": "タヌキ",    "name": "めんたぬ",     "slug": "mentanu",     "emoji": "🦝", "shelfLifeMonths": 4,  "profile": "たぬきそばはぼくのおごり" },
+    { "itemId": 11, "species": "ニワトリ",  "name": "おこめっこ",   "slug": "okomekko",    "emoji": "🐔", "shelfLifeMonths": 2,  "profile": "お米の鮮度にとってもきびしい" },
+    { "itemId": 13, "species": "リス",      "name": "おかしりす",   "slug": "okashirisu",  "emoji": "🐿️", "shelfLifeMonths": 4,  "profile": "おやつをためこむ天才。でも食べごろは逃さない" },
+    { "itemId": 14, "species": "サル",      "name": "ふるもん",     "slug": "furumon",     "emoji": "🐵", "shelfLifeMonths": 24, "profile": "果物の缶詰コレクター" },
+    { "itemId": 55, "species": "ペンギン",  "name": "ふりーずん",   "slug": "furiizun",    "emoji": "🐧", "shelfLifeMonths": 9,  "profile": "フリーズドライの氷の国からきた" },
+    { "itemId": 56, "species": "カメ",      "name": "かんぶつじい", "slug": "kanbutsujii", "emoji": "🐢", "shelfLifeMonths": 6,  "profile": "干ししいたけと昆布で長生きしておる" }
   ]
 }

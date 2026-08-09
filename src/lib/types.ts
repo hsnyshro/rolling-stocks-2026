@@ -41,6 +41,8 @@ export interface Animal {
   species: string;
   name: string;
   emoji: string;
+  /** 画像ファイル名の元: /animals/{slug}-{表情}.png */
+  slug: string;
   /** 期限の「推測」段階で使う保存期間の目安（月・安全側） */
   shelfLifeMonths: number;
   profile: string;

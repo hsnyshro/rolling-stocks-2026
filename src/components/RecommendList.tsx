@@ -5,6 +5,7 @@ import stockpileData from "@/data/stockpile.json";
 import animalsData from "@/data/animals.json";
 import type { Family, StockpileItem } from "@/lib/types";
 import { calcNeed, formatQty, isVagueUnit } from "@/lib/need";
+import AnimalSprite from "@/components/AnimalSprite";
 
 const items = stockpileData.items as StockpileItem[];
 
@@ -62,8 +63,15 @@ export default function RecommendList({ family }: { family: Family }) {
                     >
                       <span className="text-sm">
                         {animal && (
-                          <span className="mr-1" title={`${animal.name}がむらに来るよ`}>
-                            {animal.emoji}
+                          <span
+                            className="mr-1 inline-block align-middle"
+                            title={`${animal.name}がむらに来るよ`}
+                          >
+                            <AnimalSprite
+                              animal={animal}
+                              sizeClass="h-6 w-6"
+                              fallbackClass=""
+                            />
                           </span>
                         )}
                         {it.name}

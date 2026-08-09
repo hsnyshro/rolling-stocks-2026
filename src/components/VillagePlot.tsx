@@ -1,6 +1,7 @@
 "use client";
 // 村の1枠。空き地（看板）→ テント → 光るおうち の3状態
 import Link from "next/link";
+import AnimalSprite from "@/components/AnimalSprite";
 import type { Animal, Family, Stock, StockpileItem } from "@/lib/types";
 import { plotState } from "@/lib/village";
 import { effectiveNeed, formatQty } from "@/lib/need";
@@ -51,9 +52,25 @@ export default function VillagePlot({ item, animal, stock, family, today }: Prop
       )}
 
       {/* どうぶつ or 空き地の看板 */}
-      <span className={`text-4xl ${anim}`} aria-hidden>
-        {state === "empty" ? "🪧" : animal.emoji}
-      </span>
+      {state === "empty" ? (
+        <span className="text-4xl" aria-hidden>
+          🪧
+        </span>
+      ) : (
+        <AnimalSprite
+          animal={animal}
+          expression={
+            mood === "begging"
+              ? "begging"
+              : state === "lit" && (mood === "calm" || mood === "restless")
+                ? "happy"
+                : "normal"
+          }
+          sizeClass="h-16 w-16"
+          fallbackClass="text-4xl"
+          className={anim}
+        />
+      )}
 
       {/* 状態のしるし: テント / 光るおうち */}
       <span className="text-base leading-none" aria-hidden>

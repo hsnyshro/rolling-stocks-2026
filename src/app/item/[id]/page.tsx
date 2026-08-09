@@ -10,7 +10,9 @@ import type { Animal, ExpiryLot, StockpileItem } from "@/lib/types";
 import { effectiveNeed, formatQty } from "@/lib/need";
 import { daysUntil, guessExpiry, moodOf, soonestExpiry, stageLabel } from "@/lib/expiry";
 import { localVoice } from "@/lib/voice";
+import { plotState } from "@/lib/village";
 import { toCleanJpegBase64 } from "@/lib/photo";
+import AnimalSprite from "@/components/AnimalSprite";
 import WhenBought from "@/components/WhenBought";
 import SourceFooter from "@/components/SourceFooter";
 
@@ -85,6 +87,13 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const eff = effectiveNeed(item, family);
   const now = today();
 
+  // いまの気分（絵の表情と、タップの返事の両方で使う）
+  const soonLot = stock ? soonestExpiry(stock) : undefined;
+  const daysLeft = soonLot ? daysUntil(soonLot.expiresOn, now) : null;
+  const mood = qty > 0 && daysLeft !== null ? moodOf(daysLeft) : "calm";
+  const isLit =
+    plotState(qty, eff.isFallback ? null : eff.value, family) === "lit";
+
   const addWithGuess = () => {
     // 買ってきたよ = 追加。期限は種類から短め（安全側）に推測して付ける
     const lot: ExpiryLot = {
@@ -117,14 +126,15 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           className="text-6xl transition-transform active:scale-90"
           onClick={() => {
             if (!animal) return;
-            const lot = stock ? soonestExpiry(stock) : undefined;
-            const days = lot ? daysUntil(lot.expiresOn, now) : null;
-            const mood = qty > 0 && days !== null ? moodOf(days) : "calm";
             const n = tapCount + 1;
             setTapCount(n);
             // まずローカルの定型文を即表示（ネット無しでも必ず返事する）
             setBubble(
-              localVoice(mood, { name: animal.name, item: item.name, days }, n)
+              localVoice(
+                mood,
+                { name: animal.name, item: item.name, days: daysLeft },
+                n
+              )
             );
             // 裏でAIセリフを取りに行き、来たら差し替える
             fetch("/api/voice", {
@@ -135,7 +145,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
                 species: animal.species,
                 itemName: item.name,
                 mood,
-                daysLeft: days,
+                daysLeft,
               }),
             })
               .then((r) => (r.ok ? r.json() : null))
@@ -145,7 +155,22 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
               .catch(() => {}); // 失敗しても定型文が残るだけ
           }}
         >
-          {animal?.emoji ?? "📦"}
+          {animal ? (
+            <AnimalSprite
+              animal={animal}
+              expression={
+                mood === "begging"
+                  ? "begging"
+                  : isLit && (mood === "calm" || mood === "restless")
+                    ? "happy"
+                    : "normal"
+              }
+              sizeClass="h-32 w-32"
+              fallbackClass="text-6xl"
+            />
+          ) : (
+            <span aria-hidden>📦</span>
+          )}
         </button>
         <h1 className="text-xl font-extrabold">
           {animal ? animal.name : item.name}
