@@ -10,22 +10,16 @@ import { pickWaypoint } from "@/lib/pasture";
 import { plotState } from "@/lib/village";
 import { effectiveNeed } from "@/lib/need";
 import { daysUntil, moodOf, soonestExpiry } from "@/lib/expiry";
+import { usePrefersReducedMotion } from "@/components/usePrefersReducedMotion";
+import { growthStage } from "@/lib/growth";
+import type { SpriteExpression } from "@/lib/growth";
 
 /** 1回の歩行にかける時間(ms)。CSS transition の duration と揃えること */
 const WALK_MS = 4000;
-
-/** OSの「視差効果を減らす」設定の人には歩きを止める */
-function usePrefersReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReduced(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-  return reduced;
-}
+/** 歩きコマの切り替え間隔(ms) */
+const FRAME_MS = 300;
+/** もぐもぐタイムの長さ(ms) */
+const EAT_MS = 2500;
 
 interface Props {
   animal: Animal;
@@ -53,28 +47,78 @@ export default function PastureAnimal({
   const days = lot ? daysUntil(lot.expiresOn, today) : null;
   const mood = state !== "empty" && days !== null ? moodOf(days) : "calm";
 
+  // 成長段階: 星の数で決まる（0〜1=赤ちゃん / 2〜4=子ども / 5〜=大人）
+  const stage = growthStage(stock?.stars ?? 0);
+  const sizeClass =
+    stage === "baby" ? "h-8 w-8" : stage === "child" ? "h-10 w-10" : "h-12 w-12";
+  const fallbackClass =
+    stage === "baby" ? "text-xl" : stage === "child" ? "text-2xl" : "text-3xl";
+
   // 歩行: 初期位置はなわばり中心（SSRと一致する決め打ち値）。マウント後に歩き始める
   const [pos, setPos] = useState({ x: t.cx, y: t.cy });
   const [facing, setFacing] = useState<1 | -1>(1);
   const posRef = useRef(pos);
   const reduced = usePrefersReducedMotion();
 
+  const [activity, setActivity] = useState<"walk" | "rest" | "eat">("rest");
+  const [frame, setFrame] = useState(0); // 歩きコマ: 0=normal, 1=walk
+
   useEffect(() => {
     if (reduced || state === "empty") return;
     let timer: ReturnType<typeof setTimeout>;
-    const step = () => {
+    const walk = () => {
       const next = pickWaypoint(t);
       // 左へ向かうときは絵を左右反転
       setFacing(next.x < posRef.current.x ? -1 : 1);
       posRef.current = next;
       setPos(next);
-      // 歩き終わってから1〜3秒ひと休みして次の地点へ
-      timer = setTimeout(step, WALK_MS + 1000 + Math.random() * 2000);
+      setActivity("walk");
+      timer = setTimeout(rest, WALK_MS);
+    };
+    const rest = () => {
+      // 休憩。3回に1回くらいは、もぐもぐタイム
+      const eating = Math.random() < 1 / 3;
+      setActivity(eating ? "eat" : "rest");
+      const restMs = eating ? EAT_MS : 1000 + Math.random() * 2000;
+      timer = setTimeout(walk, restMs);
     };
     // 全員が同時に動き出さないよう出だしをばらす
-    timer = setTimeout(step, Math.random() * 2000);
+    timer = setTimeout(walk, Math.random() * 2000);
     return () => clearTimeout(timer);
   }, [reduced, state, t]);
+
+  // 歩いている間だけコマを交互に切り替える（パラパラ漫画）
+  useEffect(() => {
+    if (activity !== "walk" || reduced) {
+      setFrame(0);
+      return;
+    }
+    const iv = setInterval(() => setFrame((f) => (f === 0 ? 1 : 0)), FRAME_MS);
+    return () => clearInterval(iv);
+  }, [activity, reduced]);
+
+  // 絵の優先順位: せがみ > もぐもぐ > 歩きコマ > 満タン&機嫌よし > ふつう
+  const expression: SpriteExpression =
+    mood === "begging"
+      ? "begging"
+      : activity === "eat"
+        ? "eating"
+        : activity === "walk" && frame === 1
+          ? "walk"
+          : state === "lit" && (mood === "calm" || mood === "restless")
+            ? "happy"
+            : "normal";
+  // 体の動き: せがみ/しょんぼりは既存アニメ優先。歩行中はトコトコ、もぐもぐ中は脈動
+  const motionClass =
+    mood === "begging"
+      ? "animate-hop"
+      : mood === "sad"
+        ? "animate-droop"
+        : activity === "walk" && !reduced
+          ? "animate-trot"
+          : activity === "eat" && !reduced
+            ? "animate-munch"
+            : "";
 
   // 画面の下にいるほど手前に描画（重なりが自然に見える）
   const z = Math.round(pos.y);
@@ -127,28 +171,16 @@ export default function PastureAnimal({
               見てね…
             </span>
           )}
-          <span
-            className={`block ${
-              mood === "begging"
-                ? "animate-hop"
-                : mood === "sad"
-                  ? "animate-droop"
-                  : ""
-            }`}
-            style={{ transform: `scaleX(${facing})` }}
-          >
-            <AnimalSprite
-              animal={animal}
-              expression={
-                mood === "begging"
-                  ? "begging"
-                  : state === "lit" && (mood === "calm" || mood === "restless")
-                    ? "happy"
-                    : "normal"
-              }
-              sizeClass="h-12 w-12"
-              fallbackClass="text-3xl"
-            />
+          <span className="block" style={{ transform: `scaleX(${facing})` }}>
+            <span className={`block ${motionClass}`}>
+              <AnimalSprite
+                animal={animal}
+                expression={expression}
+                stage={stage}
+                sizeClass={sizeClass}
+                fallbackClass={fallbackClass}
+              />
+            </span>
           </span>
         </Link>
       )}
