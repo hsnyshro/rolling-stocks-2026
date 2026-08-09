@@ -1,7 +1,7 @@
 "use client";
 // 品目の詳細: どうぶつのプロフィール・数・期限・たべた/かってきた
 import Link from "next/link";
-import { use, useState } from "react";
+import { use, useRef, useState } from "react";
 import { useHydrated } from "@/store/useHydrated";
 import { useApp } from "@/store/useApp";
 import stockpileData from "@/data/stockpile.json";
@@ -12,9 +12,11 @@ import { daysUntil, guessExpiry, moodOf, soonestExpiry, stageLabel } from "@/lib
 import { localVoice } from "@/lib/voice";
 import { plotState } from "@/lib/village";
 import { toCleanJpegBase64 } from "@/lib/photo";
+import { growthStage } from "@/lib/growth";
 import AnimalSprite from "@/components/AnimalSprite";
 import WhenBought from "@/components/WhenBought";
 import SourceFooter from "@/components/SourceFooter";
+import { usePrefersReducedMotion } from "@/components/usePrefersReducedMotion";
 
 const items = stockpileData.items as StockpileItem[];
 const animals = animalsData.animals as Animal[];
@@ -36,6 +38,11 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const [boughtDelta, setBoughtDelta] = useState<number | null>(null);
   // 期限のアップ撮影（段階3: 確認済みへの昇格）
   const [expiryScan, setExpiryScan] = useState<"idle" | "busy" | "fail">("idle");
+  // 星ゲットのおいわい中か（買い足しで星が増えた直後だけ true）
+  const [celebrating, setCelebrating] = useState(false);
+  // 短時間に連続で星を獲得した時、古いタイマーが新しいお祝いを打ち切らないようにする
+  const celebrateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reduced = usePrefersReducedMotion();
 
   const onExpiryPhoto = async (file: File, lotId: string) => {
     if (!stock) return;
@@ -95,6 +102,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const mood = qty > 0 && daysLeft !== null ? moodOf(daysLeft) : "calm";
   const isLit =
     plotState(qty, eff.isFallback ? null : eff.value, family) === "lit";
+  const stage = growthStage(stock?.stars ?? 0);
 
   const confirmBought = (delta: number) => {
     // 買ってきたよ = 追加。ここで初めて確定登録する（それまでは在庫に触れない）
@@ -106,8 +114,17 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
       stage: "guessed",
       kind: "best-before",
     };
+    // 期限前に食べた分の買い足しなら、この登録で星が1つ増える
+    // addStockを呼ぶ前に読む（呼んだ後だとpendingRotationsが消費済みで判定できない）
+    const willEarnStar = (stock?.pendingRotations ?? 0) > 0;
     addStock(itemId, delta, lot);
     setBoughtDelta(null);
+    if (willEarnStar) {
+      setBubble("やったー！⭐ゲット！");
+      setCelebrating(true);
+      if (celebrateTimer.current) clearTimeout(celebrateTimer.current);
+      celebrateTimer.current = setTimeout(() => setCelebrating(false), 2000);
+    }
   };
 
   return (
@@ -158,18 +175,35 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           }}
         >
           {animal ? (
-            <AnimalSprite
-              animal={animal}
-              expression={
-                mood === "begging"
-                  ? "begging"
-                  : isLit && (mood === "calm" || mood === "restless")
+            <span
+              className={`relative block ${celebrating && !reduced ? "animate-star-jump" : ""}`}
+            >
+              {celebrating && (
+                <>
+                  <span aria-hidden className="absolute -top-2 -left-3 text-xl">
+                    ✨
+                  </span>
+                  <span aria-hidden className="absolute -top-3 -right-3 text-xl">
+                    ✨
+                  </span>
+                </>
+              )}
+              <AnimalSprite
+                animal={animal}
+                stage={stage}
+                expression={
+                  celebrating
                     ? "happy"
-                    : "normal"
-              }
-              sizeClass="h-32 w-32"
-              fallbackClass="text-6xl"
-            />
+                    : mood === "begging"
+                      ? "begging"
+                      : isLit && (mood === "calm" || mood === "restless")
+                        ? "happy"
+                        : "normal"
+                }
+                sizeClass="h-32 w-32"
+                fallbackClass="text-6xl"
+              />
+            </span>
           ) : (
             <span aria-hidden>📦</span>
           )}
