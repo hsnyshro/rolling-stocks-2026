@@ -29,7 +29,7 @@ const SITE_MAP = [
   {
     href: "/scan",
     emoji: "📷",
-    label: "棚おろし",
+    label: "棚卸し",
     note: "棚の写真か手入力で、今の数を登録",
   },
 ];
@@ -38,7 +38,7 @@ const SITE_MAP = [
 function crumbsFor(pathname: string): { href: string; label: string }[] {
   const home = { href: "/", label: "村" };
   if (pathname === "/start") return [home, { href: "/start", label: "家族の設定" }];
-  if (pathname === "/scan") return [home, { href: "/scan", label: "棚おろし" }];
+  if (pathname === "/scan") return [home, { href: "/scan", label: "棚卸し" }];
   const m = pathname.match(/^\/item\/(\d+)/);
   if (m) {
     const id = Number(m[1]);

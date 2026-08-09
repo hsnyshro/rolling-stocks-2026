@@ -1,5 +1,5 @@
 "use client";
-// 棚のたなおろし画面。
+// 棚卸し画面。
 // いまは「じぶんで数える」版。カメラ×AI判別はこの上に重ねる（開発中でも一周回るための保険）
 // ルール: ここでの登録は「置き換え」= いま棚にある数の申告。何回やっても数は増えない
 import { useRouter } from "next/navigation";
@@ -80,7 +80,7 @@ export default function ScanPage() {
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3 p-4">
       {/* 現在地は共通ヘッダーのパンくずで分かる（戻るリンクは廃止） */}
-      <h1 className="text-center text-xl font-extrabold">棚おろし</h1>
+      <h1 className="text-center text-xl font-extrabold">棚卸し</h1>
 
       {/* カメラ撮影 → AI判別（数は仮の値。下のリストで人が確定する） */}
       <input
@@ -172,23 +172,27 @@ export default function ScanPage() {
         })}
       </ul>
 
-      <button
-        type="button"
-        onClick={() => {
-          for (const a of animals) {
-            const v = counts[a.itemId] ?? 0;
-            const prev = stocks[a.itemId]?.qty ?? 0;
-            if (v !== prev || v > 0) scanReplace(a.itemId, v);
-          }
-          router.push("/");
-        }}
-        className="rounded-full bg-grass-deep py-3 text-lg font-bold text-white shadow-lg active:scale-95"
-      >
-        この数で記録する
-      </button>
-      <p className="text-center text-[10px] text-stone-500">
-        ※「いま棚にある数」をそのまま入れてね（前の記録は置き換わるよ）
-      </p>
+      {/* 記録ボタン: リストが長くてもスクロールせず押せるよう画面下部に固定。
+          ホームバーのある端末では safe-area 分の余白を足して押しやすくする */}
+      <div className="sticky bottom-0 -mx-4 flex flex-col gap-1 bg-linear-to-t from-sky from-60% to-sky/0 px-4 pt-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
+        <button
+          type="button"
+          onClick={() => {
+            for (const a of animals) {
+              const v = counts[a.itemId] ?? 0;
+              const prev = stocks[a.itemId]?.qty ?? 0;
+              if (v !== prev || v > 0) scanReplace(a.itemId, v);
+            }
+            router.push("/");
+          }}
+          className="rounded-full bg-grass-deep py-3 text-lg font-bold text-white shadow-lg active:scale-95"
+        >
+          この数で記録する
+        </button>
+        <p className="text-center text-[10px] text-stone-500">
+          ※「いま棚にある数」をそのまま入れてね（前の記録は置き換わるよ）
+        </p>
+      </div>
 
       <SourceFooter />
     </main>
