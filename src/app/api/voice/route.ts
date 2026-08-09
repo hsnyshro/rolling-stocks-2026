@@ -7,8 +7,8 @@ import { NextResponse } from "next/server";
 
 export const maxDuration = 30;
 
-// Workers AI で使うモデル（多言語対応の軽量モデル。差し替えやすいよう定数に）
-const WORKERS_AI_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
+// Workers AI で使うモデル（ほっしーのアカウントで使える中から、日本語が得意な Qwen3 を採用）
+const WORKERS_AI_MODEL = "@cf/qwen/qwen3-30b-a3b-fp8";
 
 const MOOD_NOTE: Record<string, string> = {
   calm: "きげんはまだ先。のんびり平和な気分",
@@ -37,11 +37,19 @@ function buildPrompt(p: VoiceReq): string {
     "- 「死」「腐る」「危険」など怖い言葉は使わない",
     "- 期限が近いときは「たべて、買いたしてね」の方向へ誘う",
     "- セリフの文だけを出力（カギカッコや説明は不要）",
+    "/no_think", // Qwen3 に「考え中のメモを出さずすぐ答えて」と伝える合図（他モデルは無視する）
   ].join("\n");
 }
 
 function clean(text: string): string | null {
-  const line = text.trim().replace(/^「|」$/g, "").split("\n")[0].trim();
+  const line = text
+    // Qwen3 は「考え中のメモ」を <think>...</think> で出すことがあるので取り除く
+    .replace(/<think>[\s\S]*?<\/think>/g, "")
+    .trim()
+    .replace(/^「|」$/g, "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean)[0];
   return line ? line.slice(0, 60) : null;
 }
 
@@ -53,7 +61,8 @@ async function viaWorkersAI(prompt: string): Promise<string | null> {
     if (!ai) return null;
     const result = (await ai.run(WORKERS_AI_MODEL, {
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 100,
+      // 「考え中のメモ」が混ざってもセリフ本文が途切れないよう、余裕を持たせる
+      max_tokens: 512,
     })) as { response?: string };
     return result.response ? clean(result.response) : null;
   } catch (e) {
