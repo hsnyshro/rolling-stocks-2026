@@ -108,9 +108,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
-      <Link href="/" className="text-sm font-bold text-grass-deep">
-        ← むらへ もどる
-      </Link>
+      {/* 現在地は共通ヘッダーのパンくずで分かる（戻るリンクは廃止） */}
 
       {/* プロフィール */}
       <section className="flex flex-col items-center gap-1 rounded-3xl bg-card p-5 shadow">

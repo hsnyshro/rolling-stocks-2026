@@ -2,7 +2,6 @@
 // 棚のたなおろし画面。
 // いまは「じぶんで数える」版。カメラ×AI判別はこの上に重ねる（開発中でも一周回るための保険）
 // ルール: ここでの登録は「置き換え」= いま棚にある数の申告。何回やっても数は増えない
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useApp } from "@/store/useApp";
@@ -80,9 +79,7 @@ export default function ScanPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3 p-4">
-      <Link href="/" className="text-sm font-bold text-grass-deep">
-        ← むらへ もどる
-      </Link>
+      {/* 現在地は共通ヘッダーのパンくずで分かる（戻るリンクは廃止） */}
       <h1 className="text-center text-xl font-extrabold">たなおろし</h1>
 
       {/* カメラ撮影 → AI判別（数は仮の値。下のリストで人が確定する） */}
