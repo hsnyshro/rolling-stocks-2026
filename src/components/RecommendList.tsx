@@ -65,7 +65,7 @@ export default function RecommendList({ family }: { family: Family }) {
                         {animal && (
                           <span
                             className="mr-1 inline-block align-middle"
-                            title={`${animal.name}がむらに来るよ`}
+                            title={`${animal.name}が村に来るよ`}
                           >
                             <AnimalSprite
                               animal={animal}

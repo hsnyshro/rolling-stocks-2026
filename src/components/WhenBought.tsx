@@ -4,7 +4,7 @@
 import { narrowExpiry } from "@/lib/expiry";
 
 const CHOICES = [
-  { key: "recent", label: "さいきん" },
+  { key: "recent", label: "最近" },
   { key: "lastMonth", label: "先月ごろ" },
   { key: "halfYear", label: "半年前ごろ" },
   { key: "overYear", label: "1年以上前" },

@@ -47,7 +47,7 @@ export default function VillagePlot({ item, animal, stock, family, today }: Prop
       )}
       {mood === "sad" && (
         <span className="absolute -top-2 right-1 z-10 rounded-full bg-stone-400 px-2 py-0.5 text-[10px] font-bold text-white shadow">
-          みてね…
+          見てね…
         </span>
       )}
 

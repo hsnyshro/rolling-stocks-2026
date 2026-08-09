@@ -78,7 +78,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
       <main className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
         <p>この品物は見つからなかったよ</p>
         <Link href="/" className="font-bold text-grass-deep underline">
-          むらへ もどる
+          村へ戻る
         </Link>
       </main>
     );
@@ -175,7 +175,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
         </h1>
         {animal && (
           <p className="text-xs text-stone-500">
-            {animal.species}｜{item.name}のせいれい
+            {animal.species}｜{item.name}の精霊
           </p>
         )}
         <p className="mt-1 text-center text-xs leading-relaxed text-stone-600">
@@ -192,7 +192,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
       {/* 数メーター */}
       <section className="rounded-3xl bg-card p-4 shadow">
         <div className="flex items-end justify-between">
-          <span className="text-sm font-bold">いまのかず</span>
+          <span className="text-sm font-bold">いまの数</span>
           <span className="text-2xl font-extrabold text-grass-deep">
             {formatQty(qty, eff.unit)}
             <span className="text-sm text-stone-500">
@@ -214,14 +214,14 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
             disabled={qty === 0}
             className="flex-1 rounded-full bg-sun py-3 font-bold shadow active:scale-95 disabled:opacity-40"
           >
-            🍽️ たべたよ
+            🍽️ 食べたよ
           </button>
           <button
             type="button"
             onClick={addWithGuess}
             className="flex-1 rounded-full bg-grass-deep py-3 font-bold text-white shadow active:scale-95"
           >
-            🛒 かってきたよ
+            🛒 買ってきたよ
           </button>
         </div>
         {qty === 0 && (
@@ -230,16 +230,16 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
             onClick={() => scanReplace(itemId, 1)}
             className="mt-2 w-full rounded-full bg-card py-2 text-sm font-bold text-grass-deep underline"
           >
-            うちに あるよ（1つ 登録する）
+            うちにあるよ（1つ登録する）
           </button>
         )}
       </section>
 
       {/* 期限の記録 */}
       <section className="rounded-3xl bg-card p-4 shadow">
-        <h2 className="text-sm font-bold">きげんの きろく</h2>
+        <h2 className="text-sm font-bold">期限の記録</h2>
         {(!stock || stock.lots.length === 0) && (
-          <p className="mt-2 text-xs text-stone-500">まだ きろくが ないよ</p>
+          <p className="mt-2 text-xs text-stone-500">まだ記録がないよ</p>
         )}
         <ul className="mt-1">
           {sortedLots.map((lot) => {
@@ -301,8 +301,8 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
                       />
                       <span className="block w-full cursor-pointer rounded-full bg-sun py-2 text-center text-sm font-bold shadow active:scale-95">
                         {expiryScan === "busy"
-                          ? "🔍 よみとり中…"
-                          : "📷 きげんの ひづけを さつえい"}
+                          ? "🔍 読み取り中…"
+                          : "📷 期限の日付を撮影"}
                       </span>
                     </label>
                     {expiryScan === "fail" && (
@@ -317,7 +317,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
                         value={manualDate}
                         onChange={(e) => setManualDate(e.target.value)}
                         className="flex-1 rounded-xl border border-sky bg-sky/40 px-3 py-2 text-sm"
-                        aria-label="きげんを 手で入れる"
+                        aria-label="期限を手で入れる"
                       />
                       <button
                         type="button"
@@ -343,8 +343,8 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           })}
         </ul>
         <p className="mt-2 text-[10px] leading-relaxed text-stone-500">
-          「賞味期限」は おいしく食べられる目安。すぎても すぐ食べられなくなるわけではないよ。
-          においや見た目も たしかめてね。
+          「賞味期限」はおいしく食べられる目安。過ぎてもすぐ食べられなくなるわけではないよ。
+          においや見た目も確かめてね。
         </p>
       </section>
 

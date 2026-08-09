@@ -17,7 +17,7 @@ export default function Stepper({ label, emoji, value, onChange }: Props) {
       <div className="flex items-center gap-3">
         <button
           type="button"
-          aria-label={`${label}をへらす`}
+          aria-label={`${label}を減らす`}
           onClick={() => onChange(Math.max(0, value - 1))}
           className="h-9 w-9 rounded-full bg-sky text-lg font-bold active:scale-90 disabled:opacity-30"
           disabled={value === 0}
@@ -27,7 +27,7 @@ export default function Stepper({ label, emoji, value, onChange }: Props) {
         <span className="w-6 text-center text-lg font-extrabold">{value}</span>
         <button
           type="button"
-          aria-label={`${label}をふやす`}
+          aria-label={`${label}を増やす`}
           onClick={() => onChange(value + 1)}
           className="h-9 w-9 rounded-full bg-grass text-lg font-bold text-white active:scale-90"
         >

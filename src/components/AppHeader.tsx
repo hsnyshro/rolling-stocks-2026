@@ -1,7 +1,7 @@
 "use client";
 // 全ページ共通ヘッダー
 // ・ハンバーガーメニュー: サイトの全体像（どんなページがあるか）を一覧で見せる
-// ・パンくずリスト: いま自分がどこにいるかを「むら › ◯◯」の形で見せる
+// ・パンくずリスト: いま自分がどこにいるかを「村 › ◯◯」の形で見せる
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,28 +17,28 @@ const SITE_MAP = [
   {
     href: "/",
     emoji: "🏘️",
-    label: "むら（ホーム）",
-    note: "どうぶつと そなえの いちらん・ずかん",
+    label: "村（ホーム）",
+    note: "どうぶつと備蓄の一覧・図鑑",
   },
   {
     href: "/start",
     emoji: "👪",
-    label: "かぞくの設定・おすすめ",
-    note: "人数を入れると ひつような量がわかる",
+    label: "家族の設定・おすすめ",
+    note: "人数を入れると必要な量がわかる",
   },
   {
     href: "/scan",
     emoji: "📷",
-    label: "たなおろし",
-    note: "たなの写真か手入力で いまの数をとうろく",
+    label: "棚おろし",
+    note: "棚の写真か手入力で、今の数を登録",
   },
 ];
 
 /** いまのURLから、パンくず（現在地の道すじ）を作る */
 function crumbsFor(pathname: string): { href: string; label: string }[] {
-  const home = { href: "/", label: "むら" };
-  if (pathname === "/start") return [home, { href: "/start", label: "かぞくの設定" }];
-  if (pathname === "/scan") return [home, { href: "/scan", label: "たなおろし" }];
+  const home = { href: "/", label: "村" };
+  if (pathname === "/start") return [home, { href: "/start", label: "家族の設定" }];
+  if (pathname === "/scan") return [home, { href: "/scan", label: "棚おろし" }];
   const m = pathname.match(/^\/item\/(\d+)/);
   if (m) {
     const id = Number(m[1]);
@@ -46,7 +46,7 @@ function crumbsFor(pathname: string): { href: string; label: string }[] {
     const item = items.find((i) => i.id === id);
     return [
       home,
-      { href: pathname, label: animal?.name ?? item?.name ?? "しなもの" },
+      { href: pathname, label: animal?.name ?? item?.name ?? "品物" },
     ];
   }
   return [home];
@@ -79,7 +79,7 @@ export default function AppHeader() {
         {/* ハンバーガーボタン */}
         <button
           type="button"
-          aria-label="メニューをひらく"
+          aria-label="メニューを開く"
           aria-expanded={open}
           onClick={() => setOpen(true)}
           className="flex h-9 w-9 shrink-0 flex-col items-center justify-center gap-[5px] rounded-xl bg-card shadow active:scale-90"
@@ -90,7 +90,7 @@ export default function AppHeader() {
         </button>
 
         {/* パンくずリスト（いまどこにいるか） */}
-        <nav aria-label="いまいる場所" className="min-w-0 flex-1">
+        <nav aria-label="現在地" className="min-w-0 flex-1">
           <ol className="flex items-center gap-1 text-sm">
             {crumbs.map((c, i) => {
               const isLast = i === crumbs.length - 1;
@@ -131,7 +131,7 @@ export default function AppHeader() {
           {/* うしろの暗い幕（タップで閉じる） */}
           <button
             type="button"
-            aria-label="メニューをとじる"
+            aria-label="メニューを閉じる"
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-ink/40"
           />
@@ -140,7 +140,7 @@ export default function AppHeader() {
               <p className="text-lg font-extrabold">ローリングストックス</p>
               <button
                 type="button"
-                aria-label="メニューをとじる"
+                aria-label="メニューを閉じる"
                 onClick={() => setOpen(false)}
                 className="flex h-9 w-9 items-center justify-center rounded-xl bg-card text-lg font-bold shadow active:scale-90"
               >
@@ -148,7 +148,7 @@ export default function AppHeader() {
               </button>
             </div>
             <p className="mb-2 text-xs text-stone-500">
-              おうちの備蓄で、どうぶつの村が育つアプリだよ
+              おうちの備蓄で、どうぶつの村が育つアプリ
             </p>
             {SITE_MAP.map((page) => {
               const isHere =
@@ -180,7 +180,7 @@ export default function AppHeader() {
               );
             })}
             <p className="mt-2 pl-1 text-xs leading-relaxed text-stone-500">
-              🐾 どうぶつのページは、むらで どうぶつを タップしてね
+              🐾 どうぶつのページは、村でキャラクターをタップすると開くよ
             </p>
           </div>
         </div>

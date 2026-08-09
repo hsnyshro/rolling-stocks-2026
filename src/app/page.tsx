@@ -38,7 +38,7 @@ export default function VillagePage() {
           href="/start"
           className="rounded-full bg-grass-deep px-8 py-3 text-lg font-bold text-white shadow-lg active:scale-95"
         >
-          むらを はじめる
+          村を始める
         </Link>
         <SourceFooter />
       </main>
@@ -66,7 +66,7 @@ export default function VillagePage() {
           ローリングストックス
           {demoOffsetDays > 0 && (
             <span className="ml-1 align-middle text-[10px] font-normal text-alert">
-              (+{demoOffsetDays}日はやおくり中)
+              (+{demoOffsetDays}日早送り中)
             </span>
           )}
         </h1>
@@ -75,7 +75,7 @@ export default function VillagePage() {
             🏠 {gauge.litCount}/{gauge.total} 点灯
           </span>
           <span className="text-sm font-bold text-grass-deep">
-            ざっくり {gauge.days} 日分のそなえ
+            ざっくり {gauge.days} 日分の備え
           </span>
         </div>
       </header>
@@ -103,7 +103,7 @@ export default function VillagePage() {
           href="/scan"
           className="flex-1 rounded-full bg-grass-deep py-3 text-center text-base font-bold text-white shadow-lg active:scale-95"
         >
-          📷 たなを とる
+          📷 棚を撮る
         </Link>
         <Link
           href="/start"

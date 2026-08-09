@@ -80,7 +80,7 @@ export default function ScanPage() {
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3 p-4">
       {/* 現在地は共通ヘッダーのパンくずで分かる（戻るリンクは廃止） */}
-      <h1 className="text-center text-xl font-extrabold">たなおろし</h1>
+      <h1 className="text-center text-xl font-extrabold">棚おろし</h1>
 
       {/* カメラ撮影 → AI判別（数は仮の値。下のリストで人が確定する） */}
       <input
@@ -105,7 +105,7 @@ export default function ScanPage() {
         <p className="mt-1 text-sm font-bold text-grass-deep">
           {scanState.kind === "busy"
             ? "AIが数えているよ…"
-            : "たなの しゃしんを とって AIに 数えてもらう"}
+            : "棚の写真を撮って、AIに数えてもらう"}
         </p>
         <p className="text-[10px] text-stone-500">
           AIの数は仮の値。下のリストで確かめて直してね（最終判断は人間！）
@@ -142,7 +142,7 @@ export default function ScanPage() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  aria-label={`${item.name}をへらす`}
+                  aria-label={`${item.name}を減らす`}
                   onClick={() => set(a.itemId, v - 1)}
                   disabled={v === 0}
                   className="h-8 w-8 rounded-full bg-sky font-bold active:scale-90 disabled:opacity-30"
@@ -155,12 +155,12 @@ export default function ScanPage() {
                   min={0}
                   value={v}
                   onChange={(e) => set(a.itemId, Number(e.target.value) || 0)}
-                  aria-label={`${item.name}のかず`}
+                  aria-label={`${item.name}の数`}
                   className="w-14 rounded-lg border border-sky bg-sky/40 py-1 text-center font-extrabold"
                 />
                 <button
                   type="button"
-                  aria-label={`${item.name}をふやす`}
+                  aria-label={`${item.name}を増やす`}
                   onClick={() => set(a.itemId, v + 1)}
                   className="h-8 w-8 rounded-full bg-grass font-bold text-white active:scale-90"
                 >
@@ -184,7 +184,7 @@ export default function ScanPage() {
         }}
         className="rounded-full bg-grass-deep py-3 text-lg font-bold text-white shadow-lg active:scale-95"
       >
-        この かずで きろくする
+        この数で記録する
       </button>
       <p className="text-center text-[10px] text-stone-500">
         ※「いま棚にある数」をそのまま入れてね（前の記録は置き換わるよ）

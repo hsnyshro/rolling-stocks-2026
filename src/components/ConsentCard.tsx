@@ -7,13 +7,13 @@ export default function ConsentCard() {
 
   return (
     <section className="flex flex-col gap-4 rounded-3xl bg-card p-5 shadow">
-      <h2 className="text-center text-lg font-extrabold">はじめる前の おやくそく</h2>
+      <h2 className="text-center text-lg font-extrabold">始める前の約束</h2>
 
       <ul className="flex flex-col gap-3 text-sm leading-relaxed">
         <li className="flex gap-2">
           <span aria-hidden>📱</span>
           <span>
-            <b>家族の人数・そなえの記録は、このスマホの中だけ</b>に保存するよ。
+            <b>家族の人数・備えの記録は、このスマホの中だけ</b>に保存するよ。
             外のサーバには送らない。
           </span>
         </li>
@@ -27,7 +27,7 @@ export default function ConsentCard() {
         <li className="flex gap-2">
           <span aria-hidden>🧑‍🧒</span>
           <span>
-            <b>13さい未満の人は、保護者の人といっしょに</b>OKしてね。
+            <b>13歳未満の人は、保護者と一緒に</b>OKしてね。
           </span>
         </li>
       </ul>
@@ -37,7 +37,7 @@ export default function ConsentCard() {
         onClick={giveConsent}
         className="rounded-full bg-grass-deep py-3 text-lg font-bold text-white shadow-lg active:scale-95"
       >
-        わかった！ はじめる
+        わかった！始める
       </button>
     </section>
   );
