@@ -88,14 +88,16 @@ export default function PastureAnimal({
   }, [reduced, state, t]);
 
   // 歩いている間だけコマを交互に切り替える（パラパラ漫画）
+  // state==="empty" になった時も止める: 在庫が尽きて歩行effectが停止しても
+  // activity="walk" のまま凍りうるため、このeffect単独でも空判定が必要
   useEffect(() => {
-    if (activity !== "walk" || reduced) {
+    if (activity !== "walk" || reduced || state === "empty") {
       setFrame(0);
       return;
     }
     const iv = setInterval(() => setFrame((f) => (f === 0 ? 1 : 0)), FRAME_MS);
     return () => clearInterval(iv);
-  }, [activity, reduced]);
+  }, [activity, reduced, state]);
 
   // 絵の優先順位: せがみ > もぐもぐ > 歩きコマ > 満タン&機嫌よし > ふつう
   const expression: SpriteExpression =
