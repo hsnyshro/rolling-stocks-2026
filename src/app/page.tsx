@@ -8,7 +8,7 @@ import stockpileData from "@/data/stockpile.json";
 import animalsData from "@/data/animals.json";
 import type { Animal, StockpileItem } from "@/lib/types";
 import { villageGauge } from "@/lib/village";
-import VillagePlot from "@/components/VillagePlot";
+import VillagePasture from "@/components/VillagePasture";
 import SourceFooter from "@/components/SourceFooter";
 
 const items = stockpileData.items as StockpileItem[];
@@ -80,22 +80,14 @@ export default function VillagePage() {
         </div>
       </header>
 
-      {/* 村（12枠のグリッド） */}
-      <section className="mx-auto grid w-full max-w-md grid-cols-3 gap-3 p-4">
-        {animals.map((animal) => {
-          const item = items.find((i) => i.id === animal.itemId)!;
-          return (
-            <VillagePlot
-              key={animal.itemId}
-              item={item}
-              animal={animal}
-              stock={stocks[animal.itemId]}
-              family={family}
-              today={now}
-            />
-          );
-        })}
-      </section>
+      {/* 牧場（12匹が歩き回る） */}
+      <VillagePasture
+        animals={animals}
+        items={items}
+        stocks={stocks}
+        family={family}
+        today={now}
+      />
 
       {/* 下部ボタン */}
       <nav className="sticky bottom-0 mt-auto flex justify-center gap-3 bg-sky/90 p-4 backdrop-blur">
