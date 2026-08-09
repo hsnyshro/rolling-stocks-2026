@@ -65,7 +65,7 @@ export default function RecommendList({ family }: { family: Family }) {
                         {animal && (
                           <span
                             className="mr-1 inline-block align-middle"
-                            title={`${animal.name}が村に来るよ`}
+                            title={`${animal.name}が動物園に来るよ`}
                           >
                             <AnimalSprite
                               animal={animal}
@@ -90,7 +90,7 @@ export default function RecommendList({ family }: { family: Family }) {
         );
       })}
       <p className="text-center text-[10px] text-stone-500">
-        🐾つきの品物は、そろえると どうぶつが村に来るよ
+        🐾つきの品物は、そろえると どうぶつが動物園に来るよ
       </p>
     </section>
   );

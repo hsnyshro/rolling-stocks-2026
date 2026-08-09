@@ -93,7 +93,7 @@ export default function StartPage() {
             onClick={() => router.push("/")}
             className="rounded-full bg-sun py-3 text-lg font-bold shadow-lg active:scale-95"
           >
-            村へ行く →
+            動物園へ行く →
           </button>
         </>
       )}

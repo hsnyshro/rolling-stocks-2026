@@ -1,7 +1,7 @@
 "use client";
 // 全ページ共通ヘッダー
 // ・ハンバーガーメニュー: サイトの全体像（どんなページがあるか）を一覧で見せる
-// ・パンくずリスト: いま自分がどこにいるかを「村 › ◯◯」の形で見せる
+// ・パンくずリスト: いま自分がどこにいるかを「動物園 › ◯◯」の形で見せる
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,8 +16,8 @@ const animals = animalsData.animals as Animal[];
 const SITE_MAP = [
   {
     href: "/",
-    emoji: "🏘️",
-    label: "村（ホーム）",
+    emoji: "🦁",
+    label: "動物園（ホーム）",
     note: "どうぶつと備蓄の一覧・図鑑",
   },
   {
@@ -36,7 +36,7 @@ const SITE_MAP = [
 
 /** いまのURLから、パンくず（現在地の道すじ）を作る */
 function crumbsFor(pathname: string): { href: string; label: string }[] {
-  const home = { href: "/", label: "村" };
+  const home = { href: "/", label: "動物園" };
   if (pathname === "/start") return [home, { href: "/start", label: "家族の設定" }];
   if (pathname === "/scan") return [home, { href: "/scan", label: "棚卸し" }];
   const m = pathname.match(/^\/item\/(\d+)/);
@@ -106,7 +106,7 @@ export default function AppHeader() {
                       aria-current="page"
                       className="truncate font-extrabold"
                     >
-                      {i === 0 && "🏘️ "}
+                      {i === 0 && "🦁 "}
                       {c.label}
                     </span>
                   ) : (
@@ -114,7 +114,7 @@ export default function AppHeader() {
                       href={c.href}
                       className="shrink-0 font-bold text-grass-deep underline-offset-2 hover:underline"
                     >
-                      {i === 0 && "🏘️ "}
+                      {i === 0 && "🦁 "}
                       {c.label}
                     </Link>
                   )}
@@ -148,7 +148,7 @@ export default function AppHeader() {
               </button>
             </div>
             <p className="mb-2 text-xs text-stone-500">
-              おうちの備蓄で、どうぶつの村が育つアプリ
+              おうちの備蓄で、動物園が育つアプリ
             </p>
             {SITE_MAP.map((page) => {
               const isHere =
@@ -180,7 +180,7 @@ export default function AppHeader() {
               );
             })}
             <p className="mt-2 pl-1 text-xs leading-relaxed text-stone-500">
-              🐾 どうぶつのページは、村でキャラクターをタップすると開くよ
+              🐾 どうぶつのページは、動物園でキャラクターをタップすると開くよ
             </p>
           </div>
         </div>

@@ -13,7 +13,7 @@ const rounded = M_PLUS_Rounded_1c({
 export const metadata: Metadata = {
   title: "ローリングストックス",
   description:
-    "棚を撮ると、どうぶつが村にやってくる。期限が来る前に食べて買い足すと、村が育つ。東京備蓄ナビのデータで、家族に必要な備蓄がわかる防災×育成ゲーム。",
+    "棚を撮ると、どうぶつが動物園にやってくる。期限が来る前に食べて買い足すと、動物園が育つ。東京備蓄ナビのデータで、家族に必要な備蓄がわかる防災×育成ゲーム。",
 };
 
 export const viewport: Viewport = {

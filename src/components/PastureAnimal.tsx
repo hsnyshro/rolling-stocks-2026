@@ -98,7 +98,7 @@ export default function PastureAnimal({
       {state === "empty" ? (
         <Link
           href={`/item/${item.id}`}
-          aria-label={`${item.name}（まだ村にいない）`}
+          aria-label={`${item.name}（まだ動物園にいない）`}
           className="absolute -translate-x-1/2 -translate-y-1/2 text-3xl transition-transform active:scale-90"
           style={{ left: `${t.homeX}%`, top: `${t.homeY}%`, zIndex: Math.round(t.homeY) }}
         >

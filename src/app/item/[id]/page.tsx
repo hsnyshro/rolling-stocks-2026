@@ -80,7 +80,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
       <main className="flex flex-1 flex-col items-center justify-center gap-4 p-6">
         <p>この品物は見つからなかったよ</p>
         <Link href="/" className="font-bold text-grass-deep underline">
-          村へ戻る
+          動物園へ戻る
         </Link>
       </main>
     );

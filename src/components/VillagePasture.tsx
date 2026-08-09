@@ -32,8 +32,8 @@ export default function VillagePasture({
 }: Props) {
   return (
     <section
-      aria-label="どうぶつの村"
-      className="relative mx-auto w-full max-w-md flex-1 overflow-hidden bg-linear-to-b from-sky via-[#d9efc0] to-grass/60"
+      aria-label="どうぶつえん"
+      className="isolate relative mx-auto w-full max-w-md flex-1 overflow-hidden bg-linear-to-b from-sky via-[#d9efc0] to-grass/60"
       style={{ minHeight: 420 }}
     >
       {DECORATIONS.map((d, i) => (

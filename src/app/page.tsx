@@ -30,7 +30,7 @@ export default function VillagePage() {
           ローリングストックス
         </h1>
         <p className="text-sm leading-relaxed text-stone-600">
-          おうちの備蓄で、どうぶつの村が育つ。
+          おうちの備蓄で、動物園が育つ。
           <br />
           まずは家族のことを教えてね。
         </p>
@@ -38,7 +38,7 @@ export default function VillagePage() {
           href="/start"
           className="rounded-full bg-grass-deep px-8 py-3 text-lg font-bold text-white shadow-lg active:scale-95"
         >
-          村を始める
+          動物園を開く
         </Link>
         <SourceFooter />
       </main>
