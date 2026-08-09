@@ -19,9 +19,9 @@ export interface Territory {
  * 並び順は animals.json と同じ（水・主食が上の方＝目につきやすい位置）
  */
 export const TERRITORIES: Territory[] = [
-  { itemId: 1,  cx: 20, cy: 12, rx: 12, ry: 6, homeX: 30, homeY: 6  }, // みずまる
-  { itemId: 2,  cx: 52, cy: 14, rx: 12, ry: 6, homeX: 62, homeY: 8  }, // こめきち
-  { itemId: 3,  cx: 83, cy: 12, rx: 11, ry: 6, homeX: 90, homeY: 6  }, // れとるくま
+  { itemId: 1,  cx: 20, cy: 16, rx: 12, ry: 5, homeX: 30, homeY: 8  }, // みずまる
+  { itemId: 2,  cx: 52, cy: 16, rx: 12, ry: 5, homeX: 62, homeY: 9  }, // こめきち
+  { itemId: 3,  cx: 83, cy: 16, rx: 11, ry: 5, homeX: 90, homeY: 8  }, // れとるくま
   { itemId: 4,  cx: 16, cy: 34, rx: 11, ry: 7, homeX: 8,  homeY: 28 }, // さばにゃん
   { itemId: 6,  cx: 48, cy: 37, rx: 12, ry: 7, homeX: 40, homeY: 30 }, // べじうさ
   { itemId: 7,  cx: 81, cy: 35, rx: 11, ry: 7, homeX: 90, homeY: 29 }, // ちーずみ
