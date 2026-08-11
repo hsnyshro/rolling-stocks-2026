@@ -28,6 +28,10 @@ interface Props {
   family: Family;
   today: Date;
   territory: Territory;
+  /** 家（テント/光るおうち）と看板を描くか。グループの帯では帯側が家を1つだけ描くので false */
+  showHome?: boolean;
+  /** リンクの読み上げ名。グループの個体は「動物名（品目名）」で区別する */
+  ariaLabel?: string;
 }
 
 export default function PastureAnimal({
@@ -37,6 +41,8 @@ export default function PastureAnimal({
   family,
   today,
   territory: t,
+  showHome = true,
+  ariaLabel,
 }: Props) {
   const qty = stock?.qty ?? 0;
   const eff = effectiveNeed(item, family);
@@ -128,7 +134,7 @@ export default function PastureAnimal({
   return (
     <>
       {/* 家: テント → 光るおうち。位置は固定。飾りなのでタップ対象にしない */}
-      {state !== "empty" && (
+      {showHome && state !== "empty" && (
         <span
           aria-hidden
           className={`absolute -translate-x-1/2 -translate-y-1/2 text-2xl ${
@@ -142,18 +148,20 @@ export default function PastureAnimal({
 
       {/* 動物（歩き回る）or 看板（まだいない）。タップで詳細ページへ */}
       {state === "empty" ? (
-        <Link
-          href={`/item/${item.id}`}
-          aria-label={`${item.name}（まだ動物園にいない）`}
-          className="absolute -translate-x-1/2 -translate-y-1/2 text-3xl transition-transform active:scale-90"
-          style={{ left: `${t.homeX}%`, top: `${t.homeY}%`, zIndex: Math.round(t.homeY) }}
-        >
-          🪧
-        </Link>
+        showHome ? (
+          <Link
+            href={`/item/${item.id}`}
+            aria-label={`${item.name}（まだ動物園にいない）`}
+            className="absolute -translate-x-1/2 -translate-y-1/2 text-3xl transition-transform active:scale-90"
+            style={{ left: `${t.homeX}%`, top: `${t.homeY}%`, zIndex: Math.round(t.homeY) }}
+          >
+            🪧
+          </Link>
+        ) : null
       ) : (
         <Link
           href={`/item/${item.id}`}
-          aria-label={animal.name}
+          aria-label={ariaLabel ?? animal.name}
           className="absolute -translate-x-1/2 -translate-y-1/2 active:scale-90"
           style={{
             left: `${pos.x}%`,

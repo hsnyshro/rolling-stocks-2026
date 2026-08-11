@@ -9,7 +9,9 @@ import animalsData from "@/data/animals.json";
 import type { Animal, StockpileItem } from "@/lib/types";
 import { villageGauge } from "@/lib/village";
 import VillagePasture from "@/components/VillagePasture";
+import GroupBand from "@/components/GroupBand";
 import SourceFooter from "@/components/SourceFooter";
+import { GROUPS } from "@/lib/zoo";
 
 const items = stockpileData.items as StockpileItem[];
 const animals = animalsData.animals as Animal[];
@@ -88,6 +90,20 @@ export default function VillagePage() {
         family={family}
         today={now}
       />
+
+      {/* グループの帯（8本）: 食品エリアの下に続く。下にスクロールして見て回る */}
+      <div className="bg-grass/30 pb-2">
+        {GROUPS.map((g) => (
+          <GroupBand
+            key={g.key}
+            group={g}
+            items={items}
+            stocks={stocks}
+            family={family}
+            today={now}
+          />
+        ))}
+      </div>
 
       {/* 下部ボタン */}
       <nav className="sticky bottom-0 mt-auto flex justify-center gap-3 bg-sky/90 p-4 backdrop-blur">
