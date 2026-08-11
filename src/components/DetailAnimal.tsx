@@ -1,7 +1,7 @@
 "use client";
 // 詳細ページの動物: 登場ポップ+呼吸+ランダム仕草+操作への反応（もぐもぐ/喜び）
 // 「いまの絵と動き」の判定は lib/detailPose.ts に集約（テスト付き）
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import AnimalSprite from "@/components/AnimalSprite";
 import { usePrefersReducedMotion } from "@/components/usePrefersReducedMotion";
 import type { Animal } from "@/lib/types";
@@ -47,17 +47,25 @@ export default function DetailAnimal({
   const reduced = usePrefersReducedMotion();
   // 実行中の演出（お祝いはpropsで来るのでここには入れない）
   const [action, setAction] = useState<"eat" | "tap" | IdleGesture | null>(null);
+  // 演出の「再生インスタンス」を区別するシーケンス番号。同じactionでも値が変わるとアニメが再度再生される
+  const [actionSeq, setActionSeq] = useState(0);
 
   // 仕草スケジューラが「いま演出中か」を読むためのref（タイマー内で最新値を見る）
   const busyRef = useRef(false);
-  busyRef.current = action !== null || celebrating;
+  // renderフェーズでのref書き込みを避けるため、依存配列なしのuseEffectに移す
+  useEffect(() => {
+    busyRef.current = action !== null || celebrating;
+  });
 
   // 操作への反応: nonce が変わるたびに再生。古いタイマーが新しい演出を打ち切らないよう
   // 「まだ自分の演出のままなら消す」方式（functional update）にする
-  useEffect(() => {
+  // useLayoutEffect で、React のレンダリング前に setState を実行（cascading renders 回避）
+  useLayoutEffect(() => {
     if (!reaction) return;
     const { type } = reaction;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAction(type);
+    setActionSeq((s) => s + 1);
     const t = setTimeout(
       () => setAction((a) => (a === type ? null : a)),
       type === "eat" ? EAT_MS : TAP_MS
@@ -79,6 +87,7 @@ export default function DetailAnimal({
       }
       const g = pickGesture(Math.random());
       setAction(g);
+      setActionSeq((s) => s + 1);
       timer = setTimeout(() => {
         setAction((a) => (a === g ? null : a));
         schedule();
@@ -98,7 +107,7 @@ export default function DetailAnimal({
   return (
     // 外側=登場→呼吸 / 中間=演出の動き / 内側=左右反転。transformを層で分けて共存させる
     <span className={`block ${reduced ? "" : "animate-arrive"}`}>
-      <span className={`block ${pose.motion}`}>
+      <span key={actionSeq} className={`block ${pose.motion}`}>
         <span
           className="block transition-transform"
           style={{ transform: `scaleX(${pose.flipped ? -1 : 1})` }}
