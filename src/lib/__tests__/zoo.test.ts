@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { GROUPS, animalFor, groupOf, stockedItemIds } from "../zoo";
+import { GROUPS, animalFor, groupOf, isFoodItem, stockedItemIds } from "../zoo";
 import stockpileData from "../../data/stockpile.json";
 import animalsData from "../../data/animals.json";
 import type { Stock } from "../types";
@@ -56,6 +56,12 @@ test("animalFor: グループ品目は合成動物を返す", () => {
 
 test("animalFor: 担当のない品目IDはundefined", () => {
   assert.equal(animalFor(999), undefined);
+});
+
+test("isFoodItem: stockpileのcategoryが「食品」の品目だけ食品扱い", () => {
+  assert.equal(isFoodItem(1), true); // 水（食品カテゴリ）
+  assert.equal(isFoodItem(30), false); // 乾電池（停電カテゴリ）
+  assert.equal(isFoodItem(999), false); // 存在しない品目
 });
 
 test("stockedItemIds: qty>0の品目だけをitemIds順で返す", () => {

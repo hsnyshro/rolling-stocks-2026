@@ -12,7 +12,7 @@ import { localVoice } from "@/lib/voice";
 import { plotState } from "@/lib/village";
 import { toCleanJpegBase64 } from "@/lib/photo";
 import { growthStage } from "@/lib/growth";
-import { animalFor } from "@/lib/zoo";
+import { animalFor, isFoodItem } from "@/lib/zoo";
 import DetailAnimal, { type DetailReaction } from "@/components/DetailAnimal";
 import WhenBought from "@/components/WhenBought";
 import SourceFooter from "@/components/SourceFooter";
@@ -24,6 +24,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const itemId = Number(id);
   const item = items.find((i) => i.id === itemId);
   const animal = animalFor(itemId);
+  const isFood = isFoodItem(itemId);
 
   const { family, stocks, eat, addStock, scanReplace, setLot, today } = useApp();
   const stock = stocks[itemId];
@@ -154,7 +155,8 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
               localVoice(
                 mood,
                 { name: animal.name, item: item.name, days: daysLeft },
-                n
+                n,
+                isFood
               )
             );
             // 裏でAIセリフを取りに行き、来たら差し替える
@@ -167,6 +169,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
                 itemName: item.name,
                 mood,
                 daysLeft,
+                isFood,
               }),
             })
               .then((r) => (r.ok ? r.json() : null))

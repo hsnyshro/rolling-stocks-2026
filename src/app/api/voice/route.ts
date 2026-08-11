@@ -23,9 +23,15 @@ interface VoiceReq {
   itemName: string;
   mood: string;
   daysLeft: number | null;
+  /** 品目が食品かどうか。省略時は食品として扱う（後方互換） */
+  isFood?: boolean;
 }
 
 function buildPrompt(p: VoiceReq): string {
+  const isFood = p.isFood ?? true;
+  const directionRule = isFood
+    ? "- 期限が近いときは「食べて、買い足してね」の方向へ誘う"
+    : "- 期限が近いときは「使って、買い足してね」の方向へ誘う";
   return [
     `あなたは防災備蓄アプリに住む、ゆるかわいい${p.species}のキャラ「${p.name}」です。`,
     `担当する備蓄品: ${p.itemName}。期限までの残り日数: ${p.daysLeft ?? "不明"}日。`,
@@ -35,7 +41,7 @@ function buildPrompt(p: VoiceReq): string {
     "ルール:",
     "- 35文字以内の自然な日本語。中学生が読める言葉づかいで、ひらがなだらけにしない。絵文字は使わない",
     "- 「死」「腐る」「危険」など怖い言葉は使わない",
-    "- 期限が近いときは「食べて、買い足してね」の方向へ誘う",
+    directionRule,
     "- セリフの文だけを出力（カギカッコや説明は不要）",
     "/no_think", // Qwen3 に「考え中のメモを出さずすぐ答えて」と伝える合図（他モデルは無視する）
   ].join("\n");

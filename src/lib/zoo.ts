@@ -2,9 +2,11 @@
 // 同じ Animal 型で返すので、詳細ページ・おしゃべり・スプライトは無改修で動く
 import animalsData from "@/data/animals.json";
 import groupsData from "@/data/groups.json";
-import type { Animal, Group, Stock } from "./types";
+import stockpileData from "@/data/stockpile.json";
+import type { Animal, Group, Stock, StockpileItem } from "./types";
 
 const animals = animalsData.animals as Animal[];
+const stockpileItems = stockpileData.items as StockpileItem[];
 
 /** 全グループ（表示順もこの順） */
 export const GROUPS = groupsData.groups as Group[];
@@ -40,4 +42,12 @@ export function stockedItemIds(
   stocks: Record<number, Stock>
 ): number[] {
   return group.itemIds.filter((id) => (stocks[id]?.qty ?? 0) > 0);
+}
+
+/**
+ * 品目が食品かどうか。stockpile.json の category が「食品」の品目だけを食品とみなす
+ * （groupOf は使えない: nutritionグループは食品の一部しか含まず、既存12匹の食品はどのグループにも属さない）
+ */
+export function isFoodItem(itemId: number): boolean {
+  return stockpileItems.find((i) => i.id === itemId)?.category === "食品";
 }
