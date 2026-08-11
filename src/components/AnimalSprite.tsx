@@ -57,7 +57,7 @@ export default function AnimalSprite({
     <img
       src={src}
       alt={animal.name}
-      className={`${sizeClass} select-none object-contain ${className}`}
+      className={`sprite-vivid ${sizeClass} select-none object-contain ${className}`}
       draggable={false}
       onError={() => {
         missingSprites.add(src);

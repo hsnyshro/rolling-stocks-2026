@@ -29,6 +29,11 @@ body {
   color: var(--ink);
 }
 
+/* どうぶつの絵の色補正: 淡いパステルの原画を濃くし、やわらかい影で背景から浮き立たせる */
+.sprite-vivid {
+  filter: saturate(1.7) contrast(1.15) drop-shadow(0 1px 1.5px rgba(90, 80, 60, 0.45));
+}
+
 /* どうぶつが「遊んで！」とせがむときのぴょんぴょん */
 @keyframes hop {
   0%, 100% { transform: translateY(0); }
