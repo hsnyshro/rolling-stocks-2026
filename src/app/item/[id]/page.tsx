@@ -5,26 +5,25 @@ import { use, useRef, useState } from "react";
 import { useHydrated } from "@/store/useHydrated";
 import { useApp } from "@/store/useApp";
 import stockpileData from "@/data/stockpile.json";
-import animalsData from "@/data/animals.json";
-import type { Animal, ExpiryLot, StockpileItem } from "@/lib/types";
+import type { ExpiryLot, StockpileItem } from "@/lib/types";
 import { effectiveNeed, formatQty } from "@/lib/need";
 import { daysUntil, guessExpiry, moodOf, soonestExpiry, stageLabel } from "@/lib/expiry";
 import { localVoice } from "@/lib/voice";
 import { plotState } from "@/lib/village";
 import { toCleanJpegBase64 } from "@/lib/photo";
 import { growthStage } from "@/lib/growth";
+import { animalFor } from "@/lib/zoo";
 import DetailAnimal, { type DetailReaction } from "@/components/DetailAnimal";
 import WhenBought from "@/components/WhenBought";
 import SourceFooter from "@/components/SourceFooter";
 
 const items = stockpileData.items as StockpileItem[];
-const animals = animalsData.animals as Animal[];
 
 export default function ItemPage(props: PageProps<"/item/[id]">) {
   const { id } = use(props.params);
   const itemId = Number(id);
   const item = items.find((i) => i.id === itemId);
-  const animal = animals.find((a) => a.itemId === itemId);
+  const animal = animalFor(itemId);
 
   const { family, stocks, eat, addStock, scanReplace, setLot, today } = useApp();
   const stock = stocks[itemId];
