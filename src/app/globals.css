@@ -93,3 +93,43 @@ body {
 .animate-star-jump {
   animation: star-jump 0.9s ease-in-out 2;
 }
+
+/* 詳細ページ: 登場（小さい状態からぴょこんと弾んで現れる）→そのまま呼吸ループへ */
+@keyframes pop-in {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+/* 呼吸: ゆっくり上下にふくらむ（常時のゆらゆら） */
+@keyframes breathe {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.03); }
+}
+.animate-arrive {
+  /* 登場0.5秒 → 0.5秒遅れで呼吸が無限ループ */
+  animation: pop-in 0.5s ease-out, breathe 3s ease-in-out 0.5s infinite;
+  transform-origin: bottom center;
+}
+
+/* 喜びのはね（タップ=素早く2回 / 仕草=ゆっくり1回） */
+@keyframes joy-hop {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  70% { transform: translateY(0); }
+}
+.animate-joy-hop {
+  animation: joy-hop 0.5s ease-in-out 2;
+}
+.animate-gesture-hop {
+  animation: joy-hop 1.2s ease-in-out;
+}
+
+/* ソワソワ: 左右に小さくゆれる（0.5秒×4回=2秒） */
+@keyframes fidget {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+.animate-fidget {
+  animation: fidget 0.5s ease-in-out 4;
+}
