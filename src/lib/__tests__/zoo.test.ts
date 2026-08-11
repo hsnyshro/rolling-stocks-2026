@@ -58,10 +58,14 @@ test("animalFor: 担当のない品目IDはundefined", () => {
   assert.equal(animalFor(999), undefined);
 });
 
-test("isFoodItem: stockpileのcategoryが「食品」の品目だけ食品扱い", () => {
+test("isFoodItem: categoryが「食品」の品目＋人が食べる例外品目を食品扱い", () => {
   assert.equal(isFoodItem(1), true); // 水（食品カテゴリ）
   assert.equal(isFoodItem(30), false); // 乾電池（停電カテゴリ）
   assert.equal(isFoodItem(999), false); // 存在しない品目
+  // カテゴリ外だが人が食べる例外品目（EDIBLE_ITEM_IDS）
+  assert.equal(isFoodItem(45), true); // 粉ミルク（乳幼児カテゴリ）
+  assert.equal(isFoodItem(51), true); // おかゆ（高齢者カテゴリ）
+  assert.equal(isFoodItem(63), false); // ペットフードは非食品セリフのまま
 });
 
 test("stockedItemIds: qty>0の品目だけをitemIds順で返す", () => {
