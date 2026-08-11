@@ -82,6 +82,22 @@ export interface Stock {
   pendingRotations: number;
 }
 
+// ---- グループ ----
+/** 品目グループ（食品以外の55品目を8グループに分け、グループごとに世話係の動物が1種いる） */
+export interface Group {
+  key: string;
+  /** 画面に出すグループ名（例: あかり・でんき） */
+  label: string;
+  animalName: string;
+  species: string;
+  emoji: string;
+  /** 画像ファイル名の元。フェーズ2で {slug}-{stage}-{expression}.png を生成する */
+  slug: string;
+  profile: string;
+  /** このグループが担当する品目ID */
+  itemIds: number[];
+}
+
 // ---- 村の枠の3状態 ----
 // empty    = 空き地（その品目が0個）
 // resident = テント暮らし（1個でもある）

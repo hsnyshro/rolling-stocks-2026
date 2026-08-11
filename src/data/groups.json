@@ -1,0 +1,84 @@
+{
+  "groups": [
+    {
+      "key": "nutrition",
+      "label": "えいよう・のみもの",
+      "animalName": "のっぽん",
+      "species": "キリン",
+      "emoji": "🦒",
+      "slug": "noppon",
+      "profile": "栄養と飲み物の見張り番。首が長いから、棚の上の品切れもすぐ見つけるよ",
+      "itemIds": [5, 8, 9, 12, 51]
+    },
+    {
+      "key": "hygiene",
+      "label": "せいけつ・トイレ",
+      "animalName": "あらいさん",
+      "species": "アライグマ",
+      "emoji": "🦝",
+      "slug": "araisan",
+      "profile": "きれい好きの洗いもの名人。清潔グッズとトイレの備えはおまかせ！",
+      "itemIds": [15, 16, 17, 18, 27, 28, 39, 57, 58]
+    },
+    {
+      "key": "care",
+      "label": "ケア",
+      "animalName": "ちくりん",
+      "species": "ハリネズミ",
+      "emoji": "🦔",
+      "slug": "chikurin",
+      "profile": "けがや病気に備える小さな看護師さん。背中の針はやさしさのしるし",
+      "itemIds": [19, 20, 33, 43, 44, 52, 53, 54]
+    },
+    {
+      "key": "kitchen",
+      "label": "キッチン・ひのもと",
+      "animalName": "こっくぶー",
+      "species": "ブタ",
+      "emoji": "🐷",
+      "slug": "kokkubu",
+      "profile": "火と台所の管理人。停電の日でも温かいごはんを作るのが夢なんだ",
+      "itemIds": [21, 22, 23, 24, 25, 26, 31, 32, 42, 61]
+    },
+    {
+      "key": "power",
+      "label": "あかり・でんき",
+      "animalName": "ぴかろう",
+      "species": "フクロウ",
+      "emoji": "🦉",
+      "slug": "pikaro",
+      "profile": "夜でも目が利くあかりの番人。停電の夜こそぼくの出番だよ",
+      "itemIds": [29, 30, 34, 38, 59, 60]
+    },
+    {
+      "key": "tools",
+      "label": "どうぐ・ひなん",
+      "animalName": "こつこつ",
+      "species": "ビーバー",
+      "emoji": "🦫",
+      "slug": "kotsukotsu",
+      "profile": "工作が得意な働き者。道具と避難の準備は「こつこつ」が合言葉",
+      "itemIds": [35, 36, 37, 40, 41, 62]
+    },
+    {
+      "key": "baby",
+      "label": "赤ちゃん",
+      "animalName": "ぽけっと",
+      "species": "カンガルー",
+      "emoji": "🦘",
+      "slug": "poketto",
+      "profile": "おなかの袋に赤ちゃんグッズがいっぱい。小さな家族を守るよ",
+      "itemIds": [45, 46, 47, 48, 49, 50]
+    },
+    {
+      "key": "pet",
+      "label": "ペット",
+      "animalName": "わんすけ",
+      "species": "イヌ",
+      "emoji": "🐶",
+      "slug": "wansuke",
+      "profile": "ペットみんなの代表。大切な仲間の分の備えも忘れないでね",
+      "itemIds": [63, 64, 65, 66, 67]
+    }
+  ]
+}
