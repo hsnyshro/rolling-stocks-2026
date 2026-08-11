@@ -50,9 +50,9 @@ export default function PastureAnimal({
   // 成長段階: 星の数で決まる（0〜1=赤ちゃん / 2〜4=子ども / 5〜=大人）
   const stage = growthStage(stock?.stars ?? 0);
   const sizeClass =
-    stage === "baby" ? "h-8 w-8" : stage === "child" ? "h-10 w-10" : "h-12 w-12";
+    stage === "baby" ? "h-12 w-12" : stage === "child" ? "h-15 w-15" : "h-18 w-18";
   const fallbackClass =
-    stage === "baby" ? "text-xl" : stage === "child" ? "text-2xl" : "text-3xl";
+    stage === "baby" ? "text-3xl" : stage === "child" ? "text-4xl" : "text-5xl";
 
   // 歩行: 初期位置はなわばり中心（SSRと一致する決め打ち値）。マウント後に歩き始める
   const [pos, setPos] = useState({ x: t.cx, y: t.cy });
