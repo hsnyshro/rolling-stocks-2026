@@ -6,15 +6,14 @@ import { persist } from "zustand/middleware";
 import type { ExpiryLot, Family, Stock } from "@/lib/types";
 import { addCount, consume, replaceCount } from "@/lib/inventory";
 import { guessExpiry } from "@/lib/expiry";
-import animalsData from "@/data/animals.json";
+import { animalFor } from "@/lib/zoo";
 
 function emptyStock(itemId: number): Stock {
   return { itemId, qty: 0, lots: [], stars: 0, pendingRotations: 0 };
 }
 
 function shelfLifeOf(itemId: number): number {
-  const a = animalsData.animals.find((x) => x.itemId === itemId);
-  return a?.shelfLifeMonths ?? 12;
+  return animalFor(itemId)?.shelfLifeMonths ?? 12;
 }
 
 interface AppState {

@@ -6,11 +6,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import stockpileData from "@/data/stockpile.json";
-import animalsData from "@/data/animals.json";
-import type { Animal, StockpileItem } from "@/lib/types";
+import type { StockpileItem } from "@/lib/types";
+import { GROUPS, animalFor } from "@/lib/zoo";
 
 const items = stockpileData.items as StockpileItem[];
-const animals = animalsData.animals as Animal[];
 
 // サイトの全体像（メニューに出す一覧）
 const SITE_MAP = [
@@ -42,12 +41,17 @@ function crumbsFor(pathname: string): { href: string; label: string }[] {
   const m = pathname.match(/^\/item\/(\d+)/);
   if (m) {
     const id = Number(m[1]);
-    const animal = animals.find((a) => a.itemId === id);
+    const animal = animalFor(id);
     const item = items.find((i) => i.id === id);
     return [
       home,
       { href: pathname, label: animal?.name ?? item?.name ?? "品物" },
     ];
+  }
+  const g = pathname.match(/^\/group\/([^/]+)/);
+  if (g) {
+    const group = GROUPS.find((x) => x.key === g[1]);
+    return [home, { href: pathname, label: group?.animalName ?? "？" }];
   }
   return [home];
 }
