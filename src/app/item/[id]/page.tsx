@@ -216,7 +216,14 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           {animal?.profile ?? item.description}
         </p>
         {stock && stock.stars > 0 && (
-          <p className="text-sm" title="期限前に食べて買いたした回数">
+          <p
+            className="text-sm"
+            title={
+              isFood
+                ? "期限前に食べて買いたした回数"
+                : "期限前に使って買いたした回数"
+            }
+          >
             {"⭐".repeat(Math.min(stock.stars, 5))}
             {stock.stars > 5 && ` ×${stock.stars}`}
           </p>
@@ -251,7 +258,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
             disabled={qty === 0}
             className="flex-1 rounded-full bg-sun py-3 font-bold shadow active:scale-95 disabled:opacity-40"
           >
-            🍽️ 食べたよ
+            {isFood ? "🍽️ 食べたよ" : "✨ 使ったよ"}
           </button>
           <button
             type="button"
@@ -428,8 +435,9 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           })}
         </ul>
         <p className="mt-2 text-[10px] leading-relaxed text-stone-500">
-          「賞味期限」はおいしく食べられる目安。過ぎてもすぐ食べられなくなるわけではないよ。
-          においや見た目も確かめてね。
+          {isFood
+            ? "「賞味期限」はおいしく食べられる目安。過ぎてもすぐ食べられなくなるわけではないよ。においや見た目も確かめてね。"
+            : "期限は安心して使える目安。過ぎてもすぐ使えなくなるわけではないよ。使えるか確かめてから交換してね。"}
         </p>
       </section>
 
