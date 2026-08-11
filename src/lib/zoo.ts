@@ -45,9 +45,16 @@ export function stockedItemIds(
 }
 
 /**
- * 品目が食品かどうか。stockpile.json の category が「食品」の品目だけを食品とみなす
+ * カテゴリは「食品」ではないが人が食べる・飲む品目
+ * （粉ミルク・液体ミルク・アレルギー対応離乳食・おかゆ。セリフを「食べてね」方向にするため）
+ */
+const EDIBLE_ITEM_IDS = new Set([45, 46, 47, 51]);
+
+/**
+ * 品目が食品かどうか。stockpile.json の category が「食品」の品目＋人が食べる例外品目を食品とみなす
  * （groupOf は使えない: nutritionグループは食品の一部しか含まず、既存12匹の食品はどのグループにも属さない）
  */
 export function isFoodItem(itemId: number): boolean {
+  if (EDIBLE_ITEM_IDS.has(itemId)) return true;
   return stockpileItems.find((i) => i.id === itemId)?.category === "食品";
 }
