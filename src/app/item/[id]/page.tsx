@@ -13,10 +13,9 @@ import { localVoice } from "@/lib/voice";
 import { plotState } from "@/lib/village";
 import { toCleanJpegBase64 } from "@/lib/photo";
 import { growthStage } from "@/lib/growth";
-import AnimalSprite from "@/components/AnimalSprite";
+import DetailAnimal, { type DetailReaction } from "@/components/DetailAnimal";
 import WhenBought from "@/components/WhenBought";
 import SourceFooter from "@/components/SourceFooter";
-import { usePrefersReducedMotion } from "@/components/usePrefersReducedMotion";
 
 const items = stockpileData.items as StockpileItem[];
 const animals = animalsData.animals as Animal[];
@@ -42,7 +41,10 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
   const [celebrating, setCelebrating] = useState(false);
   // 短時間に連続で星を獲得した時、古いタイマーが新しいお祝いを打ち切らないようにする
   const celebrateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const reduced = usePrefersReducedMotion();
+  // 操作への反応(もぐもぐ/タップの喜び)。nonceを増やすたびDetailAnimalが再生する
+  const [reaction, setReaction] = useState<DetailReaction | null>(null);
+  const react = (type: DetailReaction["type"]) =>
+    setReaction((r) => ({ type, nonce: (r?.nonce ?? 0) + 1 }));
 
   const onExpiryPhoto = async (file: File, lotId: string) => {
     if (!stock) return;
@@ -145,6 +147,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           className="text-6xl transition-transform active:scale-90"
           onClick={() => {
             if (!animal) return;
+            react("tap");
             const n = tapCount + 1;
             setTapCount(n);
             // まずローカルの定型文を即表示（ネット無しでも必ず返事する）
@@ -175,9 +178,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           }}
         >
           {animal ? (
-            <span
-              className={`relative block ${celebrating && !reduced ? "animate-star-jump" : ""}`}
-            >
+            <span className="relative block">
               {celebrating && (
                 <>
                   <span aria-hidden className="absolute -top-2 -left-3 text-xl">
@@ -188,20 +189,13 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
                   </span>
                 </>
               )}
-              <AnimalSprite
+              <DetailAnimal
                 animal={animal}
                 stage={stage}
-                expression={
-                  celebrating
-                    ? "happy"
-                    : mood === "begging"
-                      ? "begging"
-                      : isLit && (mood === "calm" || mood === "restless")
-                        ? "happy"
-                        : "normal"
-                }
-                sizeClass="h-32 w-32"
-                fallbackClass="text-6xl"
+                mood={mood}
+                isLit={isLit}
+                celebrating={celebrating}
+                reaction={reaction}
               />
             </span>
           ) : (
@@ -248,7 +242,10 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
         <div className="mt-3 flex gap-2">
           <button
             type="button"
-            onClick={() => eat(itemId)}
+            onClick={() => {
+              eat(itemId);
+              react("eat"); // もぐもぐ演出（qty===0の時はdisabledなのでここには来ない）
+            }}
             disabled={qty === 0}
             className="flex-1 rounded-full bg-sun py-3 font-bold shadow active:scale-95 disabled:opacity-40"
           >
