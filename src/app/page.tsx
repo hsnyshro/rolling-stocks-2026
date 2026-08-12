@@ -32,7 +32,9 @@ export default function VillagePage() {
           ローリングストックス
         </h1>
         <p className="text-sm leading-relaxed text-stone-600">
-          おうちの備蓄で、動物園が育つ。
+          おうちの備蓄が、動物園になる。
+          <br />
+          備えて仲間が増える、食べて育てる。
           <br />
           まずは家族のことを教えてね。
         </p>

@@ -152,7 +152,7 @@ export default function AppHeader() {
               </button>
             </div>
             <p className="mb-2 text-xs text-stone-500">
-              おうちの備蓄で、動物園が育つアプリ
+              おうちの備蓄が、動物園になるアプリ
             </p>
             {SITE_MAP.map((page) => {
               const isHere =
