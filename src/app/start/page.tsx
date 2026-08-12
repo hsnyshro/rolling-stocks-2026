@@ -73,17 +73,20 @@ export default function StartPage() {
       <Stepper label="65歳以上" emoji="🧓" value={draft.seniors} onChange={set("seniors")} />
       <Stepper label="ペット" emoji="🐾" value={draft.pets} onChange={set("pets")} />
 
-      <button
-        type="button"
-        disabled={memberCount === 0}
-        onClick={() => {
-          setFamily(draft);
-          setShowList(true);
-        }}
-        className="mt-2 rounded-full bg-grass-deep py-3 text-lg font-bold text-white shadow-lg active:scale-95 disabled:opacity-40"
-      >
-        必要な備えを見る
-      </button>
+      {/* リスト表示中は押しても変化がないので隠す（人数を変えると再表示される） */}
+      {!showList && (
+        <button
+          type="button"
+          disabled={memberCount === 0}
+          onClick={() => {
+            setFamily(draft);
+            setShowList(true);
+          }}
+          className="mt-2 rounded-full bg-grass-deep py-3 text-lg font-bold text-white shadow-lg active:scale-95 disabled:opacity-40"
+        >
+          必要な備えを見る
+        </button>
+      )}
 
       {showList && (
         <>
