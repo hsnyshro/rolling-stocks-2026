@@ -50,3 +50,4 @@ cloudflare-env.d.ts
 # Playwright
 /test-results/
 /playwright-report/
+/presentation/node_modules/
