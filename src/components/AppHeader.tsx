@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import stockpileData from "@/data/stockpile.json";
 import type { StockpileItem } from "@/lib/types";
 import { GROUPS, animalFor } from "@/lib/zoo";
+import { playTap, setSoundEnabled, soundEnabled } from "@/lib/sound";
 
 const items = stockpileData.items as StockpileItem[];
 
@@ -59,6 +60,15 @@ function crumbsFor(pathname: string): { href: string; label: string }[] {
 export default function AppHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // 音のON/OFF。保存値はlocalStorageにあるので、描画後に読み込んで合わせる
+  const [sound, setSound] = useState(true);
+  useEffect(() => setSound(soundEnabled()), []);
+  const toggleSound = () => {
+    const next = !sound;
+    setSound(next);
+    setSoundEnabled(next);
+    if (next) playTap(); // ONにした瞬間に小さく鳴らして「音が出る」と分かるように
+  };
 
   // ページが変わったらメニューを閉じる
   useEffect(() => setOpen(false), [pathname]);
@@ -127,6 +137,17 @@ export default function AppHeader() {
             })}
           </ol>
         </nav>
+
+        {/* 音のON/OFFトグル */}
+        <button
+          type="button"
+          aria-label={sound ? "音を消す" : "音を出す"}
+          aria-pressed={sound}
+          onClick={toggleSound}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-card text-lg shadow active:scale-90"
+        >
+          <span aria-hidden>{sound ? "🔊" : "🔇"}</span>
+        </button>
       </div>
 
       {/* スライドメニュー本体 */}

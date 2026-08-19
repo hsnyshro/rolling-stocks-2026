@@ -9,6 +9,7 @@ import type { ExpiryLot, StockpileItem } from "@/lib/types";
 import { effectiveNeed, formatQty } from "@/lib/need";
 import { daysUntil, guessExpiry, moodOf, soonestExpiry, stageLabel } from "@/lib/expiry";
 import { localVoice } from "@/lib/voice";
+import { playMunch, playStar, playTap, playWelcome, speak, speakIfIdle } from "@/lib/sound";
 import { plotState } from "@/lib/village";
 import { toCleanJpegBase64 } from "@/lib/photo";
 import { growthStage } from "@/lib/growth";
@@ -121,6 +122,9 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
     const willEarnStar = (stock?.pendingRotations ?? 0) > 0;
     addStock(itemId, delta, lot);
     setBoughtDelta(null);
+    // 星が増えるならお祝いの音、ふつうの買い足しならおかえりの音
+    if (willEarnStar) playStar();
+    else playWelcome();
     if (willEarnStar) {
       setBubble("やったー！⭐ゲット！");
       setCelebrating(true);
@@ -148,17 +152,18 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
           onClick={() => {
             if (!animal) return;
             react("tap");
+            playTap(); // タップはユーザー操作なので、ここでならモバイルでも音が出せる
             const n = tapCount + 1;
             setTapCount(n);
             // まずローカルの定型文を即表示（ネット無しでも必ず返事する）
-            setBubble(
-              localVoice(
-                mood,
-                { name: animal.name, item: item.name, days: daysLeft },
-                n,
-                isFood
-              )
+            const line = localVoice(
+              mood,
+              { name: animal.name, item: item.name, days: daysLeft },
+              n,
+              isFood
             );
+            setBubble(line);
+            speak(line, animal.species); // 動物の声でセリフを読み上げる
             // 裏でAIセリフを取りに行き、来たら差し替える
             fetch("/api/voice", {
               method: "POST",
@@ -174,7 +179,11 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
             })
               .then((r) => (r.ok ? r.json() : null))
               .then((d) => {
-                if (d?.line) setBubble(d.line);
+                if (d?.line) {
+                  setBubble(d.line);
+                  // 定型文をまだ読んでいる途中なら割り込まない（二重読み防止）
+                  speakIfIdle(d.line, animal.species);
+                }
               })
               .catch(() => {}); // 失敗しても定型文が残るだけ
           }}
@@ -254,6 +263,7 @@ export default function ItemPage(props: PageProps<"/item/[id]">) {
             onClick={() => {
               eat(itemId);
               react("eat"); // もぐもぐ演出（qty===0の時はdisabledなのでここには来ない）
+              playMunch();
             }}
             disabled={qty === 0}
             className="flex-1 rounded-full bg-sun py-3 font-bold shadow active:scale-95 disabled:opacity-40"
