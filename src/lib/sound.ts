@@ -1,5 +1,5 @@
-// 音まわりの一元管理: 効果音（Web Audioで合成・音源ファイル不要）と
-// セリフ読み上げ（Web Speech API・ブラウザ内蔵）。ON/OFFはlocalStorageに保存。
+// 音まわりの一元管理: 効果音（Web Audioで合成・音源ファイル不要）。
+// ON/OFFはlocalStorageに保存。
 // モバイルはユーザー操作の外で音を出せないため、再生関数は必ず
 // クリックなどのジェスチャー内から呼ぶこと（AudioContextのresumeもその中で行う）
 
@@ -15,7 +15,7 @@ export function soundEnabled(): boolean {
   }
 }
 
-/** 音のON/OFFを切り替えて保存する。OFFにしたら読み上げも止める */
+/** 音のON/OFFを切り替えて保存する */
 export function setSoundEnabled(on: boolean) {
   if (typeof window === "undefined") return;
   try {
@@ -23,7 +23,6 @@ export function setSoundEnabled(on: boolean) {
   } catch {
     // プライベートモード等で保存できなくても、その場のON/OFFは効かせる
   }
-  if (!on && "speechSynthesis" in window) window.speechSynthesis.cancel();
 }
 
 // ---- 効果音（Web Audioで合成） ----
@@ -107,61 +106,4 @@ export function playWelcome() {
     { freq: 659.25, at: 0, dur: 0.12, type: "sine", gain: 0.14 },
     { freq: 880, at: 0.14, dur: 0.22, type: "sine", gain: 0.14 },
   ]);
-}
-
-// ---- セリフ読み上げ（Web Speech API） ----
-
-/** 動物ごとの声の個性（高さpitch: 0〜2、速さrate: 0.1〜10）。speciesから決める */
-const VOICE_PROFILES: Record<string, { pitch: number; rate: number }> = {
-  // 既存12匹
-  カワウソ: { pitch: 1.3, rate: 1.05 },
-  ハムスター: { pitch: 1.8, rate: 1.2 },
-  クマ: { pitch: 0.6, rate: 0.9 },
-  ネコ: { pitch: 1.4, rate: 1.0 },
-  ウサギ: { pitch: 1.5, rate: 1.1 },
-  ネズミ: { pitch: 1.9, rate: 1.2 },
-  タヌキ: { pitch: 0.9, rate: 0.95 },
-  ニワトリ: { pitch: 1.6, rate: 1.1 },
-  リス: { pitch: 1.7, rate: 1.15 },
-  サル: { pitch: 1.2, rate: 1.1 },
-  ペンギン: { pitch: 1.1, rate: 1.0 },
-  カメ: { pitch: 0.5, rate: 0.8 }, // かんぶつじい: 低くゆっくり
-  // グループ8匹
-  キリン: { pitch: 1.0, rate: 0.95 },
-  アライグマ: { pitch: 1.3, rate: 1.05 },
-  ハリネズミ: { pitch: 1.4, rate: 1.0 },
-  ブタ: { pitch: 0.8, rate: 1.0 },
-  フクロウ: { pitch: 0.7, rate: 0.9 },
-  ビーバー: { pitch: 1.1, rate: 1.05 },
-  カンガルー: { pitch: 1.25, rate: 0.95 }, // ぽけっと: やさしいお母さん声
-  イヌ: { pitch: 1.0, rate: 1.1 },
-};
-
-/** speciesに対応する声の設定。未知の動物はふつうの声 */
-export function voiceProfile(species?: string): { pitch: number; rate: number } {
-  return (species && VOICE_PROFILES[species]) || { pitch: 1.2, rate: 1.0 };
-}
-
-/** セリフを読み上げる。前の読み上げが残っていたら止めてから読む */
-export function speak(text: string, species?: string) {
-  if (!soundEnabled()) return;
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "ja-JP";
-  const v = voiceProfile(species);
-  u.pitch = v.pitch;
-  u.rate = v.rate;
-  u.volume = 0.9;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
-}
-
-/**
- * 読み上げ中でなければ読む（AIセリフへの差し替え用）。
- * 定型文をまだ読んでいる途中に割り込むと二重読みに聞こえるため、静かな時だけ読む
- */
-export function speakIfIdle(text: string, species?: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) return;
-  speak(text, species);
 }
