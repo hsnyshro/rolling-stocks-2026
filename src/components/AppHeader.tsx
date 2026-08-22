@@ -149,9 +149,14 @@ export default function AppHeader() {
           aria-label={sound ? "音を消す" : "音を出す"}
           aria-pressed={sound}
           onClick={toggleSound}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-card text-lg shadow active:scale-90"
+          className={`flex h-9 shrink-0 items-center gap-1 rounded-full px-2.5 text-xs font-extrabold shadow active:scale-90 ${
+            sound ? "bg-grass-deep text-white" : "bg-stone-200 text-stone-500"
+          }`}
         >
-          <span aria-hidden>{sound ? "🔊" : "🔇"}</span>
+          <span aria-hidden className="text-base">
+            {sound ? "🔊" : "🔇"}
+          </span>
+          <span aria-hidden>{sound ? "音 ON" : "音 OFF"}</span>
         </button>
       </div>
 
