@@ -93,8 +93,9 @@ export default function VillagePage() {
         today={now}
       />
 
-      {/* グループの帯（8本）: 食品エリアの下に続く。下にスクロールして見て回る */}
-      <div className="bg-grass/30 pb-2">
+      {/* グループの帯（8本）: 食品エリアの下に続く。下にスクロールして見て回る。
+          背景は牧場と同じ幅に収める（PCの広い画面で端まで緑が広がらないように） */}
+      <div className="mx-auto w-full max-w-md bg-grass/30 pb-2">
         {GROUPS.map((g) => (
           <GroupBand
             key={g.key}

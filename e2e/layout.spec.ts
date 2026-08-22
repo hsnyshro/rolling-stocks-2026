@@ -23,3 +23,25 @@ for (const p of pages) {
     expect(overflow).toBeLessThanOrEqual(1);
   });
 }
+
+// PC幅(1280px)で、グループの帯の背景（うすい緑）が牧場と同じ幅に収まる
+// = 画面の端まで緑が広がらない（スマホ幅では画面幅=カード幅なので気づけない問題）
+test("PC幅でも帯の背景が牧場と同じ幅に収まる", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await seedApp(page);
+  await page.goto("/");
+  await expect(page.locator("main")).toBeVisible();
+  const pasture = await page
+    .locator('section[aria-label="どうぶつえん"]')
+    .boundingBox();
+  // 帯8本を包む外側の要素（背景色がついている）
+  const bandsWrapper = await page
+    .locator('section[aria-label="えいよう・のみもの"]')
+    .locator("xpath=..")
+    .boundingBox();
+  expect(pasture).not.toBeNull();
+  expect(bandsWrapper).not.toBeNull();
+  // 左端と幅が牧場と一致（1pxは丸め誤差）
+  expect(Math.abs(bandsWrapper!.x - pasture!.x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(bandsWrapper!.width - pasture!.width)).toBeLessThanOrEqual(1);
+});
