@@ -149,8 +149,8 @@ export default function AppHeader() {
           aria-label={sound ? "音を消す" : "音を出す"}
           aria-pressed={sound}
           onClick={toggleSound}
-          className={`flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-card px-3 text-sm font-extrabold shadow active:scale-90 ${
-            sound ? "text-ink" : "text-stone-400"
+          className={`flex h-11 shrink-0 items-center gap-1.5 rounded-full px-3 text-sm font-extrabold shadow active:scale-90 ${
+            sound ? "bg-grass/35 text-grass-deep" : "bg-card text-stone-400"
           }`}
         >
           {/* スピーカー。消音中は赤い太い斜め棒を重ねて一目で分かるようにする */}
