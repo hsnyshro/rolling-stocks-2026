@@ -34,7 +34,20 @@ function ctx(): AudioContext | null {
   if (typeof window === "undefined") return null;
   const AC = window.AudioContext;
   if (!AC) return null;
-  if (!audioCtx) audioCtx = new AC();
+  if (!audioCtx) {
+    audioCtx = new AC();
+    // iPhoneはブラウザ内で作る音を「環境音」扱いにして消音スイッチ中は鳴らさない。
+    // 他のアプリや動画と同じ「再生」扱いにして、消音スイッチに関係なく鳴るようにする
+    // （iOS 17以降で有効。消したいときは🔇ボタンで止められる）
+    const session = (navigator as Navigator & { audioSession?: { type: string } }).audioSession;
+    if (session) {
+      try {
+        session.type = "playback";
+      } catch {
+        // 未対応ブラウザでは何もしない
+      }
+    }
+  }
   if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
   return audioCtx;
 }
