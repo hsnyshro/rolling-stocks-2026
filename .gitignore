@@ -51,3 +51,9 @@ cloudflare-env.d.ts
 /test-results/
 /playwright-report/
 /presentation/node_modules/
+
+# Claude Code のローカル設定（個人の許可設定。共有しない）
+.claude/settings.local.json
+
+# ログ
+*.log
