@@ -12,8 +12,17 @@ export default function SourceFooter() {
         >
           東京備蓄ナビ 品目データ（東京都）
         </a>
-        ・MITライセンス
+        ・
+        <a
+          href="/licenses/tokyo-bichiku-navi-LICENSE.txt"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline"
+        >
+          MITライセンス（全文）
+        </a>
       </p>
+      <p>Copyright (c) 2021 Tokyo Metropolitan Government and other contributors.</p>
       <p>本アプリは東京都の認定・推奨を受けたものではありません</p>
     </footer>
   );

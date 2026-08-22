@@ -68,7 +68,7 @@ const items = lines.map((cols) => {
 writeFileSync(OUT, JSON.stringify({
   source: {
     name: "東京備蓄ナビ 品目データ（東京都）",
-    license: "MIT License / Copyright (C) Tokyo Metropolitan Government",
+    license: "MIT License / Copyright (c) 2021 Tokyo Metropolitan Government and other contributors.",
     url: "https://www.bichiku.metro.tokyo.lg.jp/",
     csv: "https://code4fukui.github.io/tokyobichikunavi/csv/stockpile_list.csv",
     note: "本アプリは東京都の認定・推奨を受けたものではありません",

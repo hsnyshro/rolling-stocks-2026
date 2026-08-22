@@ -13,7 +13,8 @@
 ## 使っているオープンデータ
 
 - [東京備蓄ナビ](https://www.bichiku.metro.tokyo.lg.jp/) 品目データ（東京都）
-  - MIT License / Copyright (C) Tokyo Metropolitan Government
+  - MIT License / Copyright (c) 2021 Tokyo Metropolitan Government and other contributors.
+  - ライセンス全文: [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)（アプリ内でも `/licenses/tokyo-bichiku-navi-LICENSE.txt` として同梱）
   - 67品目の「1人1日あたり必要量（年代・性別ごと）」を必要量計算にそのまま使用
   - CSV化: [code4fukui/tokyobichikunavi](https://github.com/code4fukui/tokyobichikunavi)
 - 本アプリは東京都の認定・推奨を受けたものではありません
