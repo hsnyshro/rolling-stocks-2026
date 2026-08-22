@@ -1,9 +1,12 @@
-// 棚の写真 → 品目と個数のJSON（Gemini 3.6 Flash）
+// 棚の写真 → 品目と個数のJSON
+// ① Workers AI（Cloudflareのエッジ、写真が外部サービスに出ない・無料枠あり）
+// ② Gemini（GOOGLE_API_KEY があるときだけの保険）
 // 写真だけを外に送る。判別した数は「仮の値」で、確定は人がやる（企画の確定ルール）
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import stockpileData from "@/data/stockpile.json";
 import animalsData from "@/data/animals.json";
+import { askVision, extractJson, getAiBinding } from "@/lib/workersAiVision";
 
 export const maxDuration = 60;
 
@@ -12,6 +15,9 @@ const targets = animalsData.animals.map((a) => {
   const item = stockpileData.items.find((i) => i.id === a.itemId)!;
   return { id: item.id, name: item.name, unit: item.unit };
 });
+
+type Found = { itemId: number; count: number; confidence: string };
+type ScanResult = { found?: Found[] };
 
 const RESULT_SCHEMA = {
   type: "object",
@@ -36,53 +42,76 @@ const RESULT_SCHEMA = {
   required: ["found"],
 } as const;
 
-export async function POST(req: Request) {
+const PROMPT = [
+  "この写真は家庭の食料備蓄の棚です。",
+  "次の品目一覧に当てはまるものが写真の中にいくつ見えるか数えてください。",
+  "確実に見えるものだけを数え、写っていない品目は含めないでください。",
+  "水はペットボトルの本数ではなくリットル数（2Lボトル1本=2）で数えてください。",
+  "",
+  "品目一覧:",
+  ...targets.map((t) => `- id=${t.id}: ${t.name}（単位: ${t.unit}）`),
+].join("\n");
+
+/** ① Workers AI で判別 */
+async function viaWorkersAI(image: string, mimeType: string): Promise<ScanResult | null> {
+  const ai = getAiBinding();
+  if (!ai) return null;
+  const text = await askVision(
+    ai,
+    image,
+    mimeType,
+    PROMPT +
+      '\n\n出力は次のJSONだけ: {"found":[{"itemId":数値,"count":数値,"confidence":"high"|"low"}]}'
+  );
+  return extractJson<ScanResult>(text);
+}
+
+/** ② Gemini で判別（保険） */
+async function viaGemini(image: string, mimeType: string): Promise<ScanResult | null> {
   const apiKey = process.env.GOOGLE_API_KEY;
-  if (!apiKey) {
-    // キー未設定でもアプリは壊さない（手動たなおろしに誘導）
-    return NextResponse.json(
-      { error: "no-api-key", message: "AI判別はまだ準備中。手で数えてね" },
-      { status: 503 }
-    );
-  }
-
+  if (!apiKey) return null;
   try {
-    const { image, mimeType } = (await req.json()) as {
-      image: string; // base64（EXIF等のメタデータはクライアント側で再エンコード時に消えている）
-      mimeType: string;
-    };
-
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
       model: "gemini-3.6-flash",
-      contents: [
-        { inlineData: { data: image, mimeType } },
-        {
-          text: [
-            "この写真は家庭の食料備蓄の棚です。",
-            "次の品目一覧に当てはまるものが写真の中にいくつ見えるか数えてください。",
-            "確実に見えるものだけを数え、写っていない品目は含めないでください。",
-            "水はペットボトルの本数ではなくリットル数（2Lボトル1本=2）で数えてください。",
-            "",
-            "品目一覧:",
-            ...targets.map((t) => `- id=${t.id}: ${t.name}（単位: ${t.unit}）`),
-          ].join("\n"),
-        },
-      ],
+      contents: [{ inlineData: { data: image, mimeType } }, { text: PROMPT }],
       config: {
         responseMimeType: "application/json",
         responseJsonSchema: RESULT_SCHEMA,
         temperature: 0,
       },
     });
+    return JSON.parse(response.text ?? "{}") as ScanResult;
+  } catch (e) {
+    console.error("gemini scan failed:", e);
+    return null;
+  }
+}
 
-    const parsed = JSON.parse(response.text ?? "{}") as {
-      found?: { itemId: number; count: number; confidence: string }[];
+export async function POST(req: Request) {
+  try {
+    const { image, mimeType } = (await req.json()) as {
+      image: string; // base64（EXIF等のメタデータはクライアント側で再エンコード時に消えている）
+      mimeType: string;
     };
+
+    const parsed =
+      (await viaWorkersAI(image, mimeType)) ?? (await viaGemini(image, mimeType));
+    if (!parsed) {
+      return NextResponse.json(
+        { error: "scan-failed", message: "読み取れなかった。もう一度撮るか、手で数えてね" },
+        { status: 502 }
+      );
+    }
+
     // 知らないIDや0以下の数は捨てる（AIの出力は信用しすぎない）
     const validIds = new Set(targets.map((t) => t.id));
     const found = (parsed.found ?? []).filter(
-      (f) => validIds.has(f.itemId) && f.count > 0
+      (f) =>
+        Number.isInteger(f.itemId) &&
+        validIds.has(f.itemId) &&
+        Number.isFinite(f.count) &&
+        f.count > 0
     );
     return NextResponse.json({ found });
   } catch (e) {

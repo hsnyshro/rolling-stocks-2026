@@ -32,7 +32,7 @@ npm test           # ロジックのテスト
 node scripts/build-stockpile.mjs   # CSV→JSON 再生成
 ```
 
-技術: Next.js 16 / TypeScript / Tailwind CSS 4 / zustand / Gemini API（写真判別・セリフ・キャラ絵）
+技術: Next.js 16 / TypeScript / Tailwind CSS 4 / zustand / Cloudflare Workers AI（写真判別: Mistral Small 3.1・セリフ: Qwen3）/ Gemini API（`GOOGLE_API_KEY` があるときだけの保険）
 
 ## ドキュメント
 
