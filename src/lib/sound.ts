@@ -107,3 +107,107 @@ export function playWelcome() {
     { freq: 880, at: 0.14, dur: 0.22, type: "sine", gain: 0.14 },
   ]);
 }
+
+// ---- BGM（Suno自作曲「Honeydew Village」をループ再生） ----
+// 効果音と同じAudioContextを使う。デコード済みの曲データ・再生中の部品は
+// モジュール変数に持つ（ReactのStrictModeでEffectが2回走っても二重再生しないため）
+
+const BGM_URL = "/bgm/honeydew-village.mp3";
+const BGM_GAIN = 0.25; // 効果音（0.14〜0.18）より控えめ。実機で聞いて調整する
+const BGM_FADE_IN = 1.5; // 秒
+const BGM_FADE_OUT = 1.5; // 秒
+
+let bgmBuffer: AudioBuffer | null = null;
+let bgmLoading: Promise<AudioBuffer | null> | null = null;
+let bgmSource: AudioBufferSourceNode | null = null;
+let bgmGain: GainNode | null = null;
+let bgmPlaying = false;
+
+/** 曲データを取得してデコードする（1回だけ。結果はキャッシュ） */
+function loadBgm(ac: AudioContext): Promise<AudioBuffer | null> {
+  if (bgmBuffer) return Promise.resolve(bgmBuffer);
+  if (!bgmLoading) {
+    bgmLoading = fetch(BGM_URL)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(r.statusText))))
+      .then((data) => ac.decodeAudioData(data))
+      .then((buf) => (bgmBuffer = buf))
+      .catch(() => {
+        bgmLoading = null; // 失敗したら次回もう一度試せるようにする
+        return null;
+      });
+  }
+  return bgmLoading;
+}
+
+/** BGMが再生中か */
+export function bgmIsPlaying(): boolean {
+  return bgmPlaying;
+}
+
+/** BGMを始める（すでに再生中・音OFFなら何もしない）。ジェスチャー内から呼ぶこと */
+export function startBgm() {
+  if (bgmPlaying || !soundEnabled()) return;
+  const ac = ctx();
+  if (!ac) return;
+  bgmPlaying = true;
+  loadBgm(ac).then((buf) => {
+    // 読み込み中にOFFにされた／読み込み失敗なら始めない
+    if (!buf || !bgmPlaying || !soundEnabled()) {
+      bgmPlaying = false;
+      return;
+    }
+    const src = ac.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    const g = ac.createGain();
+    const t = ac.currentTime;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(BGM_GAIN, t + BGM_FADE_IN);
+    src.connect(g).connect(ac.destination);
+    src.start();
+    bgmSource = src;
+    bgmGain = g;
+  });
+}
+
+/** BGMをフェードアウトして止める（再生していなければ何もしない） */
+export function stopBgm() {
+  if (!bgmPlaying) return;
+  bgmPlaying = false;
+  const src = bgmSource;
+  const g = bgmGain;
+  bgmSource = null;
+  bgmGain = null;
+  if (!src || !g || !audioCtx) return;
+  const t = audioCtx.currentTime;
+  g.gain.cancelScheduledValues(t);
+  g.gain.setValueAtTime(g.gain.value, t);
+  g.gain.setTargetAtTime(0, t, 0.3); // 0へはexponentialRampが使えないのでこちら
+  src.stop(t + BGM_FADE_OUT);
+}
+
+/**
+ * 画面が隠れた/戻ったときの音量調整（BGMは止めずに音量だけ上げ下げ）。
+ * 戻るときはAudioContextが止められていることがあるのでresumeを試す
+ */
+export function setBgmHidden(hidden: boolean) {
+  if (!bgmPlaying || !bgmGain || !audioCtx) return;
+  const ac = audioCtx;
+  const g = bgmGain;
+  if (hidden) {
+    const t = ac.currentTime;
+    g.gain.cancelScheduledValues(t);
+    g.gain.setValueAtTime(g.gain.value, t);
+    g.gain.setTargetAtTime(0, t, 0.1);
+    return;
+  }
+  if (!soundEnabled()) return;
+  const restore = () => {
+    const t = ac.currentTime;
+    g.gain.cancelScheduledValues(t);
+    g.gain.setValueAtTime(g.gain.value, t);
+    g.gain.linearRampToValueAtTime(BGM_GAIN, t + 0.5);
+  };
+  // resumeが拒否されても（Safariの割り込み中など）次の操作でctx()が再開する
+  ac.resume().then(restore, () => {});
+}

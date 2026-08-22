@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import stockpileData from "@/data/stockpile.json";
 import type { StockpileItem } from "@/lib/types";
 import { GROUPS, animalFor } from "@/lib/zoo";
-import { playTap, setSoundEnabled, soundEnabled } from "@/lib/sound";
+import { playTap, setSoundEnabled, soundEnabled, startBgm, stopBgm } from "@/lib/sound";
 
 const items = stockpileData.items as StockpileItem[];
 
@@ -67,7 +67,12 @@ export default function AppHeader() {
     const next = !sound;
     setSound(next);
     setSoundEnabled(next);
-    if (next) playTap(); // ONにした瞬間に小さく鳴らして「音が出る」と分かるように
+    if (next) {
+      playTap(); // ONにした瞬間に小さく鳴らして「音が出る」と分かるように
+      startBgm(); // クリック内なのでBGMもここから始められる
+    } else {
+      stopBgm();
+    }
   };
 
   // ページが変わったらメニューを閉じる

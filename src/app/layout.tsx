@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { M_PLUS_Rounded_1c } from "next/font/google";
 import AppHeader from "@/components/AppHeader";
+import BgmPlayer from "@/components/BgmPlayer";
 import "./globals.css";
 
 // ゆるかわ系の丸ゴシック（キャラの世界観に合わせる）
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ja" className={`${rounded.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-rounded bg-sky text-ink">
+        <BgmPlayer />
         <AppHeader />
         {children}
       </body>
