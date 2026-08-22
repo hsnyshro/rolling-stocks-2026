@@ -39,9 +39,17 @@ test("PC幅でも帯の背景が牧場と同じ幅に収まる", async ({ page }
     .locator('section[aria-label="えいよう・のみもの"]')
     .locator("xpath=..")
     .boundingBox();
+  // 下部ボタン（棚を撮る／おすすめ）を並べている箱
+  const navInner = await page
+    .locator('main nav a[href="/scan"]')
+    .locator("xpath=..")
+    .boundingBox();
   expect(pasture).not.toBeNull();
   expect(bandsWrapper).not.toBeNull();
+  expect(navInner).not.toBeNull();
   // 左端と幅が牧場と一致（1pxは丸め誤差）
-  expect(Math.abs(bandsWrapper!.x - pasture!.x)).toBeLessThanOrEqual(1);
-  expect(Math.abs(bandsWrapper!.width - pasture!.width)).toBeLessThanOrEqual(1);
+  for (const box of [bandsWrapper!, navInner!]) {
+    expect(Math.abs(box.x - pasture!.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(box.width - pasture!.width)).toBeLessThanOrEqual(1);
+  }
 });

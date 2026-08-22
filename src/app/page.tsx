@@ -108,20 +108,22 @@ export default function VillagePage() {
         ))}
       </div>
 
-      {/* 下部ボタン */}
-      <nav className="sticky bottom-0 mt-auto flex justify-center gap-3 bg-sky/90 p-4 backdrop-blur">
-        <Link
-          href="/scan"
-          className="flex-1 rounded-full bg-grass-deep py-3 text-center text-base font-bold text-white shadow-lg active:scale-95"
-        >
-          📷 棚を撮る
-        </Link>
-        <Link
-          href="/start"
-          className="rounded-full bg-card px-5 py-3 text-base font-bold shadow active:scale-95"
-        >
-          おすすめ
-        </Link>
+      {/* 下部ボタン: 帯（背景）は画面幅のまま、ボタンだけ牧場と同じ幅に寄せる（上部ゲージと同じ作り） */}
+      <nav className="sticky bottom-0 mt-auto bg-sky/90 p-4 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-md gap-3">
+          <Link
+            href="/scan"
+            className="flex-1 rounded-full bg-grass-deep py-3 text-center text-base font-bold text-white shadow-lg active:scale-95"
+          >
+            📷 棚を撮る
+          </Link>
+          <Link
+            href="/start"
+            className="rounded-full bg-card px-5 py-3 text-base font-bold shadow active:scale-95"
+          >
+            おすすめ
+          </Link>
+        </div>
       </nav>
 
       <SourceFooter />
