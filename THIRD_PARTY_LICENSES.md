@@ -35,7 +35,7 @@ SOFTWARE.
 
 ## M PLUS Rounded 1c（フォント）
 
-- 用途: アプリ画面の文字（`next/font/google` 経由でビルド時に取得）／発表資料の PDF 生成（`presentation/assets/fonts/` に同梱）
+- 用途: アプリ画面の文字（`next/font/google` 経由でビルド時に取得して配信）
 - 著作権表示: Copyright 2016 The Rounded M+ Project Authors.
 - ライセンス: SIL Open Font License, Version 1.1（<https://scripts.sil.org/OFL>）
-- 同梱している `.ttf` は Google Fonts 配布のものを改変せずに使用しています。著作権表示とライセンス文は各フォントファイルのメタデータにも埋め込まれています。
+- フォントファイルは Google Fonts 配布のものを改変せずに使用しています。著作権表示とライセンス文は各フォントファイルのメタデータにも埋め込まれています。

@@ -51,7 +51,6 @@ cloudflare-env.d.ts
 # Playwright
 /test-results/
 /playwright-report/
-/presentation/node_modules/
 
 # Claude Code のローカル設定（個人の許可設定。共有しない）
 .claude/settings.local.json
@@ -59,7 +58,7 @@ cloudflare-env.d.ts
 # ログ
 *.log
 
-# 発表資料の出力物（画面に公開デモのURLが写っているため追跡しない。deck.html から node presentation/render-deck.mjs で再生成できる）
-/presentation/rolling-stocks-deck.pdf
-/presentation/render-slide-*.png
-/presentation/assets/qr-app.png
+# 開発の作業記録・発表資料（アプリの動作に関係しないため公開リポジトリに含めない。手元のファイルはそのまま使える）
+/tasks/
+/progress-tracking.md
+/presentation/

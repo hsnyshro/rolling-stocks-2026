@@ -3,7 +3,7 @@
 おうちの備蓄で、どうぶつの村が育つ。
 都知事杯オープンデータ・ハッカソン2026 参加作品。
 
-公開デモは用意していません。下の手順で、**自分の Cloudflare アカウントにデプロイ**して遊べます。
+下の手順で、**自分の Cloudflare アカウントにデプロイ**して遊べます。
 
 ## どんなアプリ？
 
@@ -107,11 +107,3 @@ node scripts/build-stockpile.mjs  # 東京備蓄ナビのCSV → src/data/stockp
 - **データの権利の扱いは、東京備蓄ナビ（東京都）に従います。** 品目リスト・必要量などのデータ（[data/source/](data/source/)、[src/data/stockpile.json](src/data/stockpile.json)、それを使った表示・計算）は、東京備蓄ナビの MIT License（Copyright (c) 2021 Tokyo Metropolitan Government and other contributors.）の条件に従います。再利用・再配布するときは、著作権表示とライセンス文を残してください（全文は [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)）。
 - 東京都の認定・推奨を受けたものではありません。
 - フォント M PLUS Rounded 1c: SIL Open Font License 1.1（詳細は [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)）
-
-## ドキュメント
-
-[tasks/](tasks/) と [progress-tracking.md](progress-tracking.md) は、開発中の作業記録です（日本語）。
-
-- [開発計画](tasks/dev-plan-2026-0809.md)
-- [企画書 v3.2](tasks/rolling-stocks-spec-v3.md)
-- [進捗](progress-tracking.md)
