@@ -46,7 +46,6 @@ next-env.d.ts
 .wrangler/
 .dev.vars
 cloudflare-env.d.ts
-/.superpowers/
 
 # Playwright
 /test-results/
@@ -58,7 +57,22 @@ cloudflare-env.d.ts
 # ログ
 *.log
 
-# 開発の作業記録・発表資料（アプリの動作に関係しないため公開リポジトリに含めない。手元のファイルはそのまま使える）
+# 開発中の作業記録・中間生成物・開発者向けの内部ファイル（アプリの動作に関係しないため公開リポジトリに含めない。手元のファイルはそのまま使える）
 /tasks/
 /progress-tracking.md
 /presentation/
+/rules/
+/CLAUDE.md
+/.claude/
+/.superpowers/
+/assets/
+/data/animal-drafts/
+/data/test-images/
+/public/animals/generated/
+/public/animals/generated-v2/
+/public/animals/generated-v3/
+/scripts/gen-animal-sample.mjs
+/scripts/normalize-*-generated-v3.py
+/scripts/postprocess-animals.py
+/scripts/test-ai-photos.mjs
+/scripts/try-workers-ai-vision.mjs

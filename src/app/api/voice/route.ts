@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 
 export const maxDuration = 30;
 
-// Workers AI で使うモデル（ほっしーのアカウントで使える中から、日本語が得意な Qwen3 を採用）
+// Workers AI で使うモデル（無料枠で使えるモデルの中から、日本語が得意な Qwen3 を採用）
 const WORKERS_AI_MODEL = "@cf/qwen/qwen3-30b-a3b-fp8";
 
 const MOOD_NOTE: Record<string, string> = {
