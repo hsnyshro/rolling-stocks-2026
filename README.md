@@ -31,8 +31,8 @@
 ### 1. 自分のパソコンで動かす
 
 ```bash
-git clone https://github.com/hsnyshro/rolling-stocks.git
-cd rolling-stocks
+git clone https://github.com/hsnyshro/rolling-stocks-2026.git
+cd rolling-stocks-2026
 npm install
 npm run dev        # http://localhost:3000 を開く
 ```
